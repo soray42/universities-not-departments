@@ -1,0 +1,624 @@
+\documentclass[11pt]{article}
+% =====================================================================================================================
+% main.tex -- Universities, not departments: where academic prestige meets graduate pay (Haotian Yang).
+% Main text in Nature Human Behaviour format. Figures: outputs/figures/wapman2026/ (scripts/83_nexus_figures.py and
+% scripts/86_nexus_figures_extra.py). SI pointers resolve through xr against si.aux: compile si.tex first, then
+% main.tex (latexmk -pdf si; latexmk -pdf main).
+% =====================================================================================================================
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{bar}{\space\textbar\space}
+\captionsetup{font=small,labelfont=bf,labelsep=bar}
+\usepackage[super,sort&compress,comma]{natbib}
+\usepackage{lineno}
+\usepackage{xr-hyper}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+\externaldocument[SI-]{si}
+
+\linespread{1.213}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{4}
+\setlength{\emergencystretch}{3em}
+\renewcommand{\figurename}{Fig.}
+
+\newcommand{\ci}[2]{$[#1,\allowbreak\,#2]$}
+\newcommand{\SIsec}[1]{Supplementary Information, section~\ref{SI-#1}}
+\newcommand{\SItab}[1]{Supplementary Information, Table~\ref{SI-#1}}
+\newcommand{\figfile}[1]{../../outputs/figures/wapman2026/#1}
+
+
+\title{\bfseries Universities, not departments: where academic prestige meets graduate pay}
+\author{Haotian Yang\textsuperscript{1,*}\\[6pt]
+\small \textsuperscript{1}Bocconi University, Milan, Italy\\
+\small \textsuperscript{*}Corresponding author: Haotian Yang, \href{mailto:haotian.yang@studbocconi.it}{haotian.yang@studbocconi.it}}
+\date{}
+
+\begin{document}
+\maketitle
+\linenumbers
+
+\begin{abstract}
+\noindent Subject rankings rate a university's programme in a field partly by its academic standing, yet it is unclear
+whether that standing goes with what graduates earn, and whether through the department or the whole university. We
+compare the two orderings for the same university $\times$ field programmes in the United States, using departments'
+positions in the faculty hiring network, and in the United Kingdom, using the national research assessment. Academic
+standing and graduates' pay agree substantially across universities but much less among the departments of one
+university: the correlation is 0.45 against 0.05 in the US and 0.62 against 0.10 in the UK, a contrast that survives
+allowing for noisier within-university measures. Within US universities, doctoral departments' standing still tracks
+research output. We argue that academia and the labour market share mainly a university-level ordering, so a
+department's standing says little about its graduates' pay once its university is known.
+\end{abstract}
+
+\medskip
+% =====================================================================================================================
+% Introduction (no heading, as Nature Human Behaviour requires)
+
+Universities are ranked as wholes and by subject. A subject ranking rates a university's programme in one field,
+economics at one university or nursing at another, and it does so partly by surveying academics and employers
+\citep{qs_subject}. Rankings shift where students apply \citep{luca2013salience}, so what they reward matters to the
+applicants who read them. Academic standing can also be read from behaviour rather than from surveys: departments
+reveal their judgement of one another in which doctoral programmes they hire faculty from, and these hires trace a
+steep prestige hierarchy of departments \citep{clauset2015systematic, wapman2022quantifying}. Outside academia, the
+outcome that applicants and rankings most often invoke is what a programme's graduates earn.
+
+Most evidence on how graduates' pay depends on where they studied, however, compares universities as wholes or fields
+as wholes. Among students admitted to similar colleges, the pay advantage of the more selective one is small on
+average \citep{dale2002estimating}. Returns differ by field, and attending a more selective institution pays
+relatively little by comparison \citep{kirkeboen2016field}. In the UK, no subject's league-table rating correlates
+positively and significantly with returns once selectivity is held fixed \citep{britton2022how}. None of this work
+asks whether academic standing goes with pay among the departments inside one university. This, we argue, leaves
+open the question that decides what a subject ranking can tell an applicant: does the academic standing that
+corresponds to graduates' pay belong to the university or to the department? There is reason to expect the answer to
+depend on the level. Hiring committees rank departments field by field, whereas employers see the university's name
+on every graduate's record and can pool their experience with all of its graduates, much as buyers pool experience
+across the products of one brand \citep{wernerfelt1988umbrella, tadelis1999name}.
+
+In this work, we compare two orderings of the same university $\times$ field programmes, their academic standing and
+their graduates' pay, in the United States and the United Kingdom. In the US, a department's academic standing is its
+rank in its field's faculty-hiring network; the UK has no such rank, so there it is the department's rating in the
+national research assessment. We measure how closely the two orderings agree across the universities that teach a
+field and among the departments of a single university. Because the second comparison is the noisier one, we test
+the difference against simulated data that reproduce the noise of each measure. We then ask whether the department's
+rank still carries academic information inside its university, how much pay goes with it there, and whether it
+improves out-of-sample predictions of pay. We also follow agreement over graduates' careers and in UK subjects paid on
+national scales.
+
+We find that academic standing and pay agree substantially across universities but far less within them: their
+correlation is 0.45 across universities and 0.05 within them in the US, and 0.62 against 0.10 in the UK. In
+simulations that reproduce each measure's noise, equal agreement at both levels never yields a within-university
+correlation as low as observed. Inside a university, the department's rank is not noise, since it tracks research
+output far more closely than pay, and in an exploratory decomposition what it adds to predictions of pay is almost
+all information about its university. The academic hierarchy and the labour market, we argue, share mainly a ranking
+of universities. For applicants, and for rankings that score departments partly by academic reputation, a
+department's academic standing therefore says little about its graduates' pay once its university is known.
+
+% =====================================================================================================================
+\section*{Results}
+
+\subsection*{Two orderings of the same programmes}
+
+A programme is a university's bachelor's degree in one field, such as economics at one university, and we order the
+same programmes in two ways. The first ordering is academic standing. In the US we use two published ranks from the
+faculty-hiring network \citep{wapman2022quantifying}: $F$, a department's rank among the departments of its field,
+and $G$, its university's rank in the network that pools all fields. The UK has no department-level hiring rank, so
+there the department's standing is its rating in the Research Excellence Framework (REF) 2021
+(ref.~\citenum{ref2021results}). The second ordering is graduates' median pay: four years after completion in the US College
+Scorecard \citep{scorecard}, with the Census Post-Secondary Employment Outcomes (PSEO) following fixed cohorts for ten
+years \citep{pseo2026}, and one to five years after graduation in UK tax records \citep{dfe_leo_provider}.
+
+We refer to the correlation of the two orderings as their \emph{agreement} and compute it in three ways on the same
+programmes. Agreement across universities compares the programmes of one field at different universities, so it
+mixes differences between universities with differences between the departments of one university. Agreement
+between universities correlates university averages. Agreement within universities compares the departments of one
+university with each other, after university and field fixed effects. Put differently, a university whose departments
+all rank high and whose graduates all earn well raises agreement across and between universities but leaves
+agreement within them unchanged. The three are different statistics, so the gap between them is not a share of
+agreement explained by the university (Methods).
+
+If pay is set competitively and employers learn about graduates symmetrically, as our model assumes
+(\SIsec{sec:si-model}), pay reflects employers' beliefs about a programme
+\citep{farber1996learning, altonji2001employer, macleod2017big}, and agreement can be read as how far two markets,
+employers and academic hiring committees, rank programmes alike \citep{macleod2015reputation}. We use this reading to
+interpret the results rather than to predict them.
+
+\subsection*{Universities and departments}
+
+Fig.~\ref{fig:levels} sets agreement across universities beside agreement within them, both computed on normal
+scores so that the two orderings share one scale in every field (Methods). We find that the two levels
+differ sharply. In the US, $F$ and pay agree at 0.45 across universities but at only 0.05
+within them, although both statistics use the same programmes and only the fixed effects separate them. The UK, where
+the academic measure is itself departmental, gives the same picture: REF rating and pay agree at 0.62 across
+universities and at 0.10 within them. Because the across statistic mixes variation between universities with
+variation within them, it understates agreement about universities proper: agreement between universities, on
+university means, is 0.69 in the US and 0.78 in the UK (\SIsec{sec:si-contrast}). Intake attainment, a third ordering
+that shares the university-wide components of the other two \citep{macleod2017big}, shows the same contrast with both
+REF rating and pay.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=8.7cm]{\figfile{nexus_fig1}}
+\caption{\textbf{Academic standing and pay agree across universities and far less within them.} Points are observed
+correlations with 95\% intervals: blue compares programmes across universities, vermilion the departments of one
+university. Grey bands show the within-university correlation simulated with equal agreement at both levels. Intake
+rows are supporting evidence. US and UK programmes; details in \SIsec{sec:si-figs}.}\label{fig:levels}
+\end{figure}
+
+Two qualifications concern what the within statistic isolates. It holds the field fixed, so it says nothing about the
+value of choosing one field over another, or about comparing universities within a field. Nor is it purely
+departmental: where a university trait counts for more in some fields than in others, part of that trait survives the
+university fixed effects. Netting out field-specific slopes on selectivity and on $G$ removes part of it and brings
+the US within value close to zero (\SIsec{sec:si-contrast}).
+
+A lower correlation within universities is to be expected even if agreement were equal at both levels, however,
+because differences between the departments of one university are measured with more noise. Within UK universities,
+for example, REF ratings from 2014 and 2021 correlate at only about 0.5 (\SItab{tab:si-reliab}). We therefore ask how
+low the within correlation would be if academic standing and pay agreed equally at both levels. To this end, we
+simulate data sets on the real layout of programmes, universities and fields, with equal latent agreement between and
+within universities and with each measure's noise set to reproduce its observed reliability, and we pass every
+simulated data set through the same pipeline as the data (Methods). Under equal agreement, the US within
+correlation would be about 0.31 (\SItab{tab:si-calib}). None of the simulated values is as low as the observed 0.05,
+and the same holds for every UK pair (Fig.~\ref{fig:levels}, grey bands). To check the test itself, we re-ran the
+whole procedure, nuisance estimation included, on data simulated under equal agreement. It rejects at about the
+nominal rate when the noise model is right, and up to about five times too often when noise sits at the pessimistic
+end of its range. Even that distortion is small beside the observed gap. The contrast also holds on the largest US sample, which does not need selectivity data,
+and with REF 2014 as a re-measurement of UK academic standing (\SIsec{sec:si-audit}). When the simulation is instead fitted with
+separate agreement at each level, it puts the latent agreement of $F$ and pay at about 0.08 within universities against
+0.70 between them (\SItab{tab:si-model}). These model-based values rest on the latent model, whereas the observed
+correlations do not, and we use them only to illustrate magnitudes.
+
+The contrast for intake is less robust than the one for REF rating and pay. When we rebuild the UK analysis on
+programmes with at least one high-attainment entrant, or on programmes with many graduates in the earnings data, the
+reliability rule written into the script before its estimate (Methods) still separates the levels for REF rating and
+pay but no longer for some pairs involving intake (\SItab{tab:si-robust}). Because that rule proved miscalibrated,
+these subsets describe rather than test. The like-for-like within correlations are all positive, so the contrast is
+one of degree. We read it as follows: academic standing and pay do agree about departments, but most of what they
+share is an ordering of universities.
+
+\subsection*{Academic information within universities}
+
+Is the department's rank simply noise once its university is fixed? We find that it is not, at least for doctoral
+departments. Within universities, departments ranked higher in hiring publish more per faculty member in the National
+Research Council's assessment of doctoral programmes \citep{nrc2011data}, and this association is far stronger than
+their association with graduates' pay on the same programmes, which is close to zero (Fig.~\ref{fig:academic}A); it
+holds net of department size and doctoral production (\SIsec{sec:si-pcp}). For these departments, the weak within-university agreement with pay
+therefore does not arise because the rank is noise, although noise in the pay medians could still hide a relation with
+pay. Nor is the hiring rank mainly a count of doctorates: a rank that allows for each
+department's volume of doctoral production and hiring keeps all of the field-level agreement with pay
+(\SIsec{sec:si-slope}).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=8.7cm]{\figfile{nexus_fig_academic}}
+\caption{\textbf{Inside a university, the department's rank tracks research more than pay, and its position among the
+university's departments adds little to predicting pay.} (A) Within-university correlations of the hiring rank $F$ with
+NRC research measures (green) and with pay on the same programmes (vermilion). (B) Gain in out-of-sample $R^2$ from
+$F$ and its parts; rows below the rule are exploratory. Bars: 95\% intervals. Details in \SIsec{sec:si-figs}.}\label{fig:academic}
+\end{figure}
+
+\subsection*{What the department adds}
+
+We first compare a department's own rank with its university's rank as predictors of pay across universities. Across
+US fields, agreement of $F$ with pay is on average slightly lower than agreement of $G$ with pay, and correcting $F$
+for its greater noise shrinks this gap without closing it (\SItab{tab:si-map}). $F$ thus predicts pay no better than
+$G$ across universities. That does not make it redundant: within universities, where the university fixed effects
+hold $G$ fixed, $F$ still goes with pay, as the positive within correlation of Fig.~\ref{fig:levels} shows.
+
+On the scale of pay, we find the department's part to be small (Fig.~\ref{fig:gradient}). Across the universities of a
+field, graduates of a department one within-field standard deviation (SD) higher in $F$ earn 0.077 log points more four
+years after completion. Among the departments of one university, the same gradient is 0.010 log points, i.e., about
+1\% of pay. One SD is a sizeable step: in a typical field it spans about 36 places of the hiring rank. On the
+programmes with selectivity data, a specification that adds field-specific slopes on mean SAT, admission rate, Pell
+share and $G$ puts the gradient at about 0.6\%, with an interval that reaches below zero; the samples differ, so
+these numbers are not a decomposition. Adding the department's doctoral production to that specification barely changes it.
+The controls absorb most of $F$, so what remains of $F$ is noisy, but the complete hiring records let us measure that
+noise, and correcting for it raises the gradient only to about 0.8\% per SD. Since US selectivity is measured for the
+university, the gradient also carries any sorting of stronger students into a university's higher-ranked departments.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=8.7cm]{\figfile{nexus_fig_gradient}}
+\caption{\textbf{Within a university, the department's pay gradient is small.} Change in log median pay per within-field SD
+of academic standing, (A) across and within US universities and (B) within universities, by specification, for the US
+hiring rank and the UK REF rating. Bars: 95\% intervals (dashed: cluster-robust); markers without bars have no interval.
+Values and samples in \SItab{tab:si-gradient}.}\label{fig:gradient}
+\end{figure}
+
+The UK gradient, which rests on REF ratings rather than on hiring, is of the same order, although the data cannot
+rank it against the US one. Within a university, a subject whose department stands one SD higher in REF 2021 rating
+has graduates who earn about 1.8\% more five years after graduation, and about 1.2\% more with subject-specific slopes on $G$ and
+selectivity, the analogue of the US main specification. REF 2014 assessed research while these cohorts studied,
+whereas REF 2021 assessed it largely after they had been taught, and with REF 2014 the gradient is larger, about
+3.2\%. Because the UK data also record each programme's own intake, we can ask how much of this gradient moves with
+who enrols: the point estimate is about 60\%, too imprecise to read as a decomposition of the gradient
+(\SItab{tab:si-gradient}).
+
+Out of sample, the department's rank does improve prediction. Adding it with field-specific slopes raises the
+out-of-sample $R^2$ for the programme pay of a held-out university by about 1.4 points, more than the threshold we had
+set for calling the department's contribution small. Field-specific slopes on the university's own standing,
+however, give the same gain without $F$. In an exploratory decomposition, the department's position among its
+university's departments adds about nothing for a new university and about a tenth of a point within a known one
+(Fig.~\ref{fig:academic}B). Once its university's standing is known, then, a department's place
+among its university's departments adds little to the prediction of its graduates' pay.
+
+\subsection*{The field map}
+
+Agreement also differs from field to field. Measured in each US field as the Spearman correlation between $F$ and
+four-year median pay across the universities that teach the field, it is positive in most fields
+(Fig.~\ref{fig:map}A) and averages 0.38, a field-by-field statistic that is not directly comparable with the pooled
+values of Fig.~\ref{fig:levels}. Among the fields taught at many universities, it ranges from 0.04 in music to 0.70 in
+computer engineering, with computer science at 0.68 and nursing at 0.17. Part of this spread is noise in the pay
+medians, but not all of it: propagating each median's sampling noise leaves most of the heterogeneity and nearly the
+same ordering of fields (\SIsec{sec:si-data}), and PSEO earnings order fields much as the Scorecard does
+(\SItab{tab:si-map}).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{\figfile{nexus_fig2}}
+\caption{\textbf{Agreement varies by field.} (A) US: correlation across universities of the hiring rank $F$ with four-year
+pay, by field; marker area grows with the number of universities; bars: $\pm1.96$ bootstrap SE.
+(B) UK: the same for the university-wide rank $G$ and five-year pay; orange marks subjects paid on national scales.
+Top rows: means with 95\% intervals. Details in \SIsec{sec:si-figs}.}\label{fig:map}
+\end{figure}
+
+The field map does not, however, show where agreement sits. Fields in which pay follows $F$ closely are the fields in
+which pay follows university selectivity closely: across the larger US fields, these two field-level correlations have
+a true-score correlation of 0.87 (\SItab{tab:si-map}). The UK offers a check with the university-wide rank $G$, built
+from the academic careers that researchers report themselves, which orders UK universities much as REF does
+(Methods). Agreement of $G$ with five-year pay varies substantially across subjects
+(Fig.~\ref{fig:map}B), and it is high in the subjects in which pay correlates strongly with university selectivity
+(\SItab{tab:si-map}). In both countries, then, a field with high agreement could have a steep gradient between
+departments or simply a steep gradient between universities. The field map alone cannot tell the two apart; the
+two-level contrast above can.
+
+Agreement about universities is itself partly, but not wholly, shared with intake. In the US, controlling for mean
+SAT, admission rate and other university traits lowers mean field-level agreement, on the fields with SAT data, from
+0.38 to 0.10, and dating these controls to graduates' entry years leaves the net agreement about where it was
+(\SItab{tab:si-map}). The UK data control graduates' own prior attainment directly: among graduates in the same
+attainment band, about two thirds of the agreement of $G$ with pay survives (\SIsec{sec:si-slope}). The two controls
+remove different things, because university-level selectivity also absorbs peer and resource effects
+\citep{dale2002estimating}.
+
+\subsection*{Careers}
+
+The remaining results are secondary: they concern agreement across universities and rest on stronger
+assumptions. We observe that agreement across universities grows as careers advance. Within fixed US graduation
+cohorts, agreement of $F$ with median pay rises by about 0.03 per year since graduation (Fig.~\ref{fig:career}A). In
+the UK, agreement of $G$ with pay rises at a similar rate, from 0.38 one year after graduation to 0.48 five years after
+(Fig.~\ref{fig:career}C), and it does so also when pay is standardised for graduates' prior attainment. Part of the US
+rise may come from graduate study rather than from careers: if graduates of higher-ranked universities more often
+leave the earnings data to study and return with higher pay, agreement rises mechanically. Controlling for the share
+of a university's bachelor's graduates who later earn a research doctorate absorbs almost two thirds of the slope.
+That share, however, is closely related to $G$, so the control removes university standing as well, and the data
+cannot say how much of the absorbed part is graduate study.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{\figfile{nexus_fig3}}
+\caption{\textbf{Agreement grows with years since graduation, and the growth appears in the loading on the university-wide
+rank.} (A) US mean agreement of $F$ (blue) and $G$ (pink) with pay, fixed cohorts; (B) rank-regression loadings of
+pay on $F$ and $G$; (C) UK mean agreement of $G$ with pay. Bars show 95\% intervals; PSEO and LEO pay. Details in
+\SIsec{sec:si-figs}.}\label{fig:career}
+\end{figure}
+
+A change within a cohort also mixes career time with calendar time. If calendar and cohort trends are not negative,
+the part due to career time lies between about 0.015 and 0.03 per year, i.e., roughly half of the observed rise or
+more (\SIsec{sec:si-career}). Nor does the rise mainly reflect the census division in which graduates work. Net of the
+wage level of those divisions, five-year agreement keeps its size, and about a sixth of the career rise moves with
+destination wages, a quarter with destination wages and the out-of-state share together (\SIsec{sec:si-career}).
+
+Which part of the academic ordering gains weight? $F$ and $G$ are highly correlated (\SItab{tab:si-map}), and their
+agreement with pay rises in parallel (Fig.~\ref{fig:career}A). Rank regressions of pay on both separate them: the
+loading on $G$ grows by about 0.034 per year, while the loading on $F$ shows no detectable trend
+(Fig.~\ref{fig:career}B). Whether the two trends differ from each other depends on the estimator, so we do not claim a
+difference between them; net of selectivity, the partial correlation of $G$ with pay still rises, although the
+corresponding regression loading is not distinguishable from zero (\SIsec{sec:si-career}). We thus find no sign that
+the department's own rank, net of its university's, gains weight over the first ten years, although the data cannot
+rule out a rise over nine years about as large as the $F$ loading at one year (about 0.13). This statement concerns the loadings, not the within-university
+correlation of Fig.~\ref{fig:levels}, which we do not track over careers. In the model, learning about individual
+graduates leaves the covariance of pay with university standing unchanged at names that employers see often, so a
+rising loading on $G$ with no detectable trend in the loading on $F$ points to pay growth that follows university standing or to learning
+about rarely seen names (\SIsec{sec:si-model}). Besides the graduate study noted above, the timing of the ranks offers
+a competing explanation: they describe the faculty of 2011--2020, closer in time to these cohorts' later earnings than
+to their earliest.
+
+\subsection*{National pay scales}
+
+In UK subjects whose graduates are paid largely on national scales, pay is set partly by schedule rather than by
+employers. Three subjects fall in this group: nursing and midwifery, medicine and dentistry, and education and
+teaching. In these, agreement of $G$ with five-year pay averages 0.12, in contrast to 0.52 in the other subjects
+(Fig.~\ref{fig:map}B), and the gap remains when pay is standardised for graduates' prior attainment. The pattern
+parallels the finding of \citet{britton2022how} that UK returns barely follow selectivity in medicine and education,
+which they attribute to centrally regulated wages. With three subjects, however, it marks a descriptive boundary rather
+than an identified mechanism, and the classification by subject is coarse: allied health, whose graduates are partly
+paid on national bands, agrees about as strongly as the other subjects (\SItab{tab:si-map}). A pay scale also need not
+lower agreement by itself. In the model, a schedule that only rescales market pay leaves correlations unchanged
+(\SIsec{sec:si-model}), so weak agreement under national scales can reflect noisier medians, schedule variation
+unrelated to standing, or weaker agreement in the underlying market, and these data do not separate the three.
+
+% =====================================================================================================================
+\section*{Discussion}
+
+Academic standing and graduates' pay order the same programmes in a common way, but mainly through the university.
+The two orderings agree substantially across universities and far less among the departments of one university, in
+two countries with different academic measures, and the contrast survives a test that allows for the noisier
+within-university comparison. The weak agreement within universities does not mean the rank lacks academic content:
+among NRC-assessed doctoral departments it tracks research output inside a university far more closely than pay. In an
+exploratory decomposition, almost all of what the department's rank adds to out-of-sample predictions of pay is
+information about its university, and fields differ in agreement largely as they differ in how steeply pay follows
+university selectivity. In the UK, intake attainment shows the same contrast, less robustly, and over careers agreement
+across universities grows, a rise detectable in the loading on the university-wide rank but not in that on the
+department's rank. Read together, these results suggest that what the
+academic hierarchy and the labour market share is mainly a ranking of universities, with a small departmental
+component. To the question of which organisational level of academic standing corresponds to graduates'
+pay, our answer is: mostly the university.
+
+The pattern fits two findings in economics. \citet{macleod2017big} find that employers reward a college's
+reputation, measured by its graduates' admission scores, and that this reward falls when individual skill becomes
+visible. UK
+league-table ratings of subjects show no significant positive association with returns once selectivity is held
+fixed \citep{britton2022how}. Our results add a revealed academic ordering and locate where it meets pay: mainly at
+the university. For the study of faculty-hiring hierarchies \citep{clauset2015systematic, wapman2022quantifying, morgan2022socioeconomic},
+they indicate that the US hiring rank carries information about graduates' pay mostly through its university-wide
+component, which it shares with selectivity. Studies that use US faculty-hiring ranks as proxies for programme quality
+outside academia should therefore treat their department-level component with caution.
+
+Why agreement within universities is weak is not identified, but the model narrows the possible readings
+(\SIsec{sec:si-model}). If pay is set competitively and employers learn about graduates symmetrically, pay reflects
+employers' beliefs, and the within-university covariance of standing and pay is proportional to the product of two
+quantities: $\kappa$, the correlation of departments' academic standing with their graduates' department-specific
+productivity, and $\Lambda$, which grows with how far employers attribute productivity to departments and learn it
+from graduates' own records. Weak attribution and slow learning therefore shrink the covariance and the pay gradient.
+In the correlation, however, they act through the reliability of pay, which we measure and build into the test, and
+through a factor $q$: the reliability-corrected within correlation equals $\kappa\sqrt{q}$, where $q$ lies between
+employers' attribution weight and 1. This factor is small only if employers attribute pay to departments from noisy
+records while learning almost nothing within four years. With learning as fast as estimated elsewhere
+\citep{lange2007speed, arcidiacono2010beyond}, $q$ is close to 1. Within the model, and if employers' prior uncertainty
+about departments matches the true spread of departments, the small model-based within correlations then point to a
+small $\kappa$: departments' academic standing would track the department-specific productivity of their graduates
+only weakly. The positive control fits this reading, since within universities the department's rank tracks research
+output far more closely than pay. Outside the model, the REF's focus on research could also lower the measured within correlation.
+
+Two implications follow, within the limits set out below. First, rankings that compare departments partly on academic
+reputation \citep{qs_subject} may, as guides to pay, largely restate the standing of the university. Second, for an
+applicant comparing programmes, a department's academic rank says little about its graduates' pay relative to other
+departments of the same university: one within-field SD of department standing goes with about 0.5\% to 1\% higher
+pay in the US and 1\% to 3\% in the UK. These figures describe who earns what, not what a programme does to a student's
+pay.
+
+Our design is descriptive. Agreement can arise from common causes, and the public aggregates
+we use do not separate selection, value added and employer screening; in particular, the selectivity controls do not
+rule out sorting on traits they do not measure. We observe graduates' earnings, not employers' judgements, and reading
+pay as employers' valuation requires the model's assumptions of competitive pay and symmetric learning. Medians miss
+the upper tail of pay, where elite returns concentrate \citep{zimmerman2019elite, chetty2023diversifying}, and
+Scorecard medians cover only federally aided completers who work; Scorecard also reports one set of medians for
+campuses that share an identifier, which pools some branch campuses, although dropping them leaves the contrast in
+place (\SIsec{sec:si-data}). The academic measures differ by country: the US hiring rank describes the faculty of
+2011--2020, the UK department result rests on REF ratings of research rather than on hiring, and the UK
+university-wide rank uses self-reported academic careers. Because $F$ and $G$ come from overlapping hiring data, their
+errors may be correlated, which affects the comparisons of $F$ with $G$ and the joint career loadings, though not the
+within-university contrast. The positive control covers only doctoral departments assessed by the NRC, which sit in
+the upper part of the hiring-rank distribution, and it does not rule out that noise in the pay medians hides a
+within-university relation with pay. Intake records who enrols, not what students prefer, so the intake results describe
+sorting, not choices. Graduate-study timing and the timing of the ranks cannot be excluded as sources of the career
+rise, the career-time ranges are identified sets under sign restrictions, and pay is netted of destination wages only
+between census divisions.
+
+The calibrated test is a parametric bootstrap whose nuisance parameters are fitted on the same data, and its main
+simulation gives each university one effect common to all its fields; it rejects equal agreement under the fitted
+measurement model. The rejection rests on that latent structure rather than on the test's calibration. If university
+standing loads differently on different fields, a null chosen after a development run to reproduce the observed
+field-to-field spread of agreement still rejects for the academic--pay pairs in both countries. The US rejection fails,
+on one of three loading families, once that spread is pushed about a quarter beyond what we observe: it holds at 1.21
+and fails at 1.29 times the observed spread. The UK academic--pay rejection fails only at two to three times the
+observed spread. We did not audit heterogeneous loadings and misspecified noise jointly, and under heterogeneous
+loadings the intake pairs support no conclusion. The model-based correlations rest on the same latent model with classical errors, and their
+approximate intervals leave out the uncertainty of the fitted parameters. The reliability rule we wrote into the script
+before its estimate proved miscalibrated, so the UK robustness subsets that rely on it are descriptive. The calibrated test,
+the like-for-like US contrast and the production adjustment inside the gradient design were all added after the first
+results had been seen. The calibration audit, the positive control and the prediction analysis were specified in
+their scripts after the main results had been seen, and the decomposition of the prediction gain after its own
+results. Tests that we call pre-specified were specified in the script before that estimate was
+computed, after related results had been seen; the model was written after most results, and no analysis was publicly
+registered (\SIsec{sec:si-prereg}). Finally, the US analyses were re-run on a corrected 2026 release of the hiring
+data, with a repaired name join, after all results had been seen (\SIsec{sec:si-data}).
+
+Admission-cutoff designs with ranked application lists \citep{kirkeboen2016field, avery2013revealed} could ask
+whether the return to a programme goes with its university's standing or with its department's
+(\SIsec{sec:si-model}). Because a department's rank and its university's rank are highly correlated within fields
+(\SItab{tab:si-map}), such a design would need many cutoffs to vary the department's rank at a given university rank.
+The department-level events that public data let us study, first ABET or AACSB accreditations and Nobel prizes, are
+followed by no large change in first-year pay or in completions by students already enrolled
+(\SIsec{sec:si-events}).
+
+% =====================================================================================================================
+\section*{Methods}
+
+\paragraph{Data.} All inputs are public; \SItab{tab:si-data} lists sources and releases, and \SItab{tab:si-flow} the
+samples. The US academic ordering is the published SpringRank \citep{debacco2018physical} field rank $F$ and
+university-wide rank $G$ of \citet{wapman2022quantifying}, estimated from a census of faculty at 368 PhD-granting US
+institutions, 2011--2020, and signed so that higher means higher standing. We use the 2026 regeneration of their
+data, the GitHub release at commit 841e9c9 (ref.~\citenum{wapman2026data}). An earlier public export \citep{wapman2022data} had
+a truncated list of hiring edges, and an earlier version of this analysis used it (\SIsec{sec:si-data}). US pay is the median
+earnings of bachelor's completers four years after completion in the College Scorecard field-of-study file
+\citep{scorecard}, which covers completers who received federal (Title IV) aid and who work and are not enrolled.
+Programmes are matched to departments by normalised institution name, with 65 hand-checked pairs for institutions whose
+Scorecard names carry campus or city qualifiers, and by a curated map of 66 fields, 65 of which have a 2026 rank. The
+canonical sample keeps the 55 fields with at least 15 matched universities, a threshold that keeps each field-level
+correlation from resting on a handful of universities. The main gradient specification loses universities without a
+reported SAT average, among them the University of California campuses, and this loss falls partly on highly ranked
+departments (\SIsec{sec:si-slope}). Scorecard reports one set of medians per OPEID6 identifier, so campuses that share
+one, such as Rutgers New Brunswick and Camden, carry the same pay (\SIsec{sec:si-data}). PSEO \citep{pseo, pseo2026}
+gives median pay one, five and ten years after graduation for three-year graduation cohorts, which lets us follow the
+same cohorts over their careers. We use release V4.14.1 and keep, within each field and cohort from 2001--2003 to
+2010--2012, the institutions observed at all three horizons (40 fields, 127 institutions), so that a change across
+horizons is not a change in the set of institutions. UK pay is the provider $\times$ subject median from the
+Longitudinal Education Outcomes (LEO) file \citep{dfe_leo_provider}, one, three and five years after graduation, for
+the cohorts 2013/14 to 2016/17. The file also gives medians by prior-attainment band, which let the UK analyses control
+graduates' own prior attainment. The UK department measure is the REF 2021 grade-point average of the unit of
+assessment matched to the subject \citep{ref2021results}, for 15 subjects; REF 2014 is used for the test--retest
+reliability of the rating and for one variant of the gradient. Because the UK has no department-level hiring rank, the
+UK $G$ is a SpringRank of 11,987 doctorate-to-faculty moves between institutions in Great Britain in ORCID-derived
+mobility records \citep{li2026orcid, ror2026data}. It orders universities much as REF does (Spearman 0.815 across 131
+universities; \SItab{tab:si-map}). UK intake is the share of a programme's graduates who entered with at least 360
+UCAS tariff points; in the two-level contrast, suppressed cells of one or two graduates are coded as one. US
+selectivity (mean SAT, admission rate) and Pell share come from the Scorecard institution files and describe the
+university, not the programme.
+
+\paragraph{Agreement at two levels.} To separate universities from departments, we compute one statistic at two
+levels on the same programmes. Each ordering is converted to Blom normal scores within field (US) or subject (UK) and
+standardised there, so that both orderings have the same distribution in every field and a linear correlation can be
+pooled across fields. The across-university statistic is the Pearson correlation of these scores over all programmes.
+It is a within-field total correlation, which mixes variation between universities with variation between the
+departments of one university. The within-university statistic is the Pearson correlation of the scores' residuals on
+university and field fixed effects. The university-mean statistic is the Pearson correlation, over universities, of
+the university means of the field-demeaned scores (\SIsec{sec:si-contrast}). The same programmes enter all three:
+3,961 US programmes (214 universities, 53 fields; the cells of the main gradient specification) and 864 UK programmes
+(111 providers, 15 subjects). The US contrast that removes only fixed effects was added after the first results,
+because the pre-specified within value also removed field-specific slopes on mean SAT, admission rate, Pell share and
+$G$ that the across value did not; that stricter value is reported in \SIsec{sec:si-contrast}.
+
+\paragraph{Reliabilities.} A test of the two levels needs each measure's reliability within universities, where the
+noise is largest. For REF it is the within-provider correlation of REF 2014 and REF 2021 ratings, read as a
+test--retest reliability, which real change between the exercises lowers. For pay it is one minus the share of
+residual variance due to the sampling noise of each median, computed from the released quartiles and earner counts
+(\SIsec{sec:si-data}). For intake it is an odd/even-cohort split half stepped up with the Spearman--Brown formula
+\citep{spearman1910correlation, brown1910some}. For $F$, split halves of the public hiring edges give reliabilities
+that average 0.89 across 58 fields. Because SpringRank on the complete public edges reproduces the published rank, this
+is the sampling reliability of the published rank itself; an extrapolation to all hires with a US doctorate (0.92)
+serves as a sensitivity. \SIsec{sec:si-contrast} describes the versions of the residual reliability of $F$ and which
+analysis uses each.
+
+\paragraph{Testing the two levels.} Our pre-specified rule divided each within correlation by the square root of the
+product of the two reliabilities and compared the result with the across correlation. Simulation later showed that
+this rule is not a calibrated test. Normal scores computed within subject lower the within correlation even without
+noise, the intake split half overstates intake reliability, and in the US the rule corrects for noise in $F$ but not
+in pay. Under equal agreement, the rule declares lower agreement within universities in up to 17\% of simulated UK
+data sets for the normal scores used here and up to 53\% for linear scores, and in 81\% of US data sets, against a
+nominal 5\%. We report its verdicts (\SIsec{sec:si-rule}) but do not use them as evidence. Instead, after the first
+results had been seen, we calibrated the test by a parametric bootstrap. Latent scores are $T_k=u_k[i]+v_k[p]$ for
+each ordering $k$, with a university component $u$, common to all fields of a university, and a programme component
+$v$ on the real programmes and universities, $\mathrm{corr}(u)=\rho_{\mathrm{between}}$ and
+$\mathrm{corr}(v)=\rho_{\mathrm{within}}$. Observed measures are generated as the data are made, so that the simulated
+statistics face the same noise as the real ones: REF and $F$ carry classical normal error ($F$ at its field's
+reliability), pay medians carry each programme's own sampling noise, and UK intake is a binomial count published with
+LEO's rounding and suppression. Nuisance parameters are fitted on the same data by indirect inference to the observed
+variance shares, the REF test--retest correlation and the intake moments; under the null, a common $\rho$ is
+calibrated to the observed across correlation. Every simulated data set passes through the full pipeline, including
+the fixed effects and the reliabilities. With 600 null data sets, the one-sided $P$ is
+$(1+\#\{\text{null}\le\text{observed}\})/(1+600)$, so its smallest attainable value, $P=0.0017$, means that no
+simulated within correlation is as low as the observed one. Model-based estimates free $\rho_{\mathrm{within}}$ and
+match the observed within and across correlations; their approximate simulation intervals are in
+\SItab{tab:si-model}.
+
+\paragraph{Agreement in each field.} For field $f$, agreement is the Spearman correlation, across the universities
+$i$ that teach $f$, between an academic ordering ($F_{if}$ or $G_i$) and median pay $Y_{if}$; the Supplementary Information
+and the panels of Fig.~\ref{fig:career} call it coupling. A rank correlation compares the two orderings
+without assuming a functional form, and it is not driven by the skew of pay medians. Partial agreement correlates the
+rank residuals of the academic ordering and of $Y$ on the ranks of the controls. Means over fields weight fields
+equally, so that large fields do not dominate the field map.
+
+\paragraph{Department gradient.} The correlations measure how closely the orderings agree; the gradient measures how
+much pay goes with a department's standing. The within-university slope is $\beta$ in $\log Y_{if}=\alpha_i+\mu_f+\beta
+F^{z}_{if}+\sum_c\gamma_{fc}C_{ic}+\varepsilon_{if}$, with $F^{z}$ standardised within field and $C$ the
+university-level controls of the main specification. The university fixed effects $\alpha_i$ restrict the comparison
+to departments of the same university, and the field-specific slopes $\gamma_{fc}$ let selectivity and $G$ carry a
+different weight in each field, as the field map indicates they do. Because the controls absorb most of $F$, the
+reliability correction divides $\beta$ by the reliability of $F$ net of the design, with the public-edge and with the
+extrapolated reliability of $F$. The UK slope uses REF rank in place of $F$, with provider and subject fixed effects.
+
+\paragraph{Positive control and prediction.} The positive control correlates, within universities, the department
+rank $F$ with research measures of the same departments from the National Research Council's assessment of
+research-doctorate programmes (data for 2005--06) \citep{nrc2011data}. It uses the within statistic of the two-level
+contrast on departments with a clean one-to-one match in fields that name the same discipline. The primary measure,
+named in advance, is publications per faculty member; the NRC's overall rankings also weight doctoral production and
+placement and serve only as secondary measures. The prediction analysis holds out whole universities in repeated
+tenfold cross-validation and predicts each programme's log pay from field effects and university-level covariates
+($G$, mean SAT, admission rate, Pell share, control and state earnings level), with and without $F$; a second task holds
+out one programme at a time and adds the mean residual pay of the university's other programmes. No estimate uses the
+held-out pay (\SIsec{sec:si-pcp}).
+
+\paragraph{Career time.} Within each field and graduation cohort, PSEO cells keep the institutions observed at all
+three horizons, with at least 15 per cell, so the same institutions are compared at one, five and ten years. The
+career-time slope is the per-year change in mean agreement across horizons within a cohort. Such a change mixes
+career time with calendar time, because a cohort is observed at later horizons in later years. Comparing cohorts at
+matched calendar years bounds the career-time part, under the assumption that calendar and cohort effects are not
+negative; a surface of graduation windows and horizons, on fields observed with the same institutions in every cell,
+gives a second bound of the same kind (\SIsec{sec:si-career}). These bounds are identified sets under sign
+restrictions, not confidence intervals. To ask which academic ordering gains weight, we regress pay ranks on the ranks
+of $F$ and $G$ within field and cohort; the standardised coefficients are the loadings $b_F$ and $b_G$. Their per-year
+changes are estimated cell by cell and, as a check, in a pooled form. The UK career slope uses LEO cohorts observed
+one, three and five years after graduation at the same providers.
+
+\paragraph{Inference.} Interval bars in the figures and brackets in the SI are 95\% intervals. Most are percentile
+intervals from a cluster bootstrap that resamples universities (US) or providers (UK), because the programmes of one
+university are not independent of one another. Two variants are used: means over UK subjects resample subjects, then
+providers, and slopes compared across specifications reuse the same draws, so that changes are paired. The two-level
+contrast uses 2,000 replicates and recomputes every reliability in each; the US slopes reuse the 999 replicates of
+the original specification. PSEO career-time slopes, the audits of $F$ and the comparison of Scorecard with PSEO use
+the two-way (field, university) cluster variance \citep{cameron2011robust}, because the same universities recur across
+fields and cohorts. In Fig.~\ref{fig:gradient}, the REF 2014 slope has a cluster-robust interval, and the slope across
+universities, whose source gives a cluster-robust SE, is drawn as a point. The grey bands of
+Fig.~\ref{fig:levels} are ranges of simulated values, not intervals. The construct and model tests (\SIsec{sec:si-model}), the two-level rule, the
+calibration audit, the positive control and the prediction rule were specified in the analysis scripts before the
+corresponding estimate was computed, after related results had been seen, except the heterogeneous-loading nulls of the
+calibration audit, chosen after a development run. They were not publicly registered. The calibrated simulation test, the
+like-for-like US contrast and the production adjustment inside the gradient design were added after the first results
+had been seen, and a few checks were computed after the main results (\SIsec{sec:si-prereg}).
+
+\paragraph{Ethics.} The study is a secondary analysis of publicly available data: aggregate statistics released by
+statistical agencies and government departments, and public records of researchers' academic careers (the
+faculty-hiring data and ORCID-derived mobility records), which we analyse only in aggregate. No human participants
+were recruited, no private or restricted records were accessed, and no information on identifiable individuals is
+reported; ethical approval was therefore not sought.
+
+\paragraph{Use of generative AI.} The author used Claude (Anthropic) to assist with collecting and processing the public data, writing and checking the analysis
+code, and drafting and editing the manuscript. Each analysis was re-computed independently, in a separate session,
+before its results were used. The author directed the work, reviewed the results and the text, and takes full
+responsibility for the content.
+
+\subsection*{Data availability}
+All data analysed are public and are listed, with releases and access dates, in \SItab{tab:si-data} and in
+\texttt{data/sources.csv} of the repository \url{https://github.com/soray42/universities-not-departments}: the
+faculty-hiring ranks of \citet{wapman2026data}, College Scorecard field-of-study and institution files
+\citep{scorecard}, PSEO earnings \citep{pseo2026}, the DfE LEO provider file \citep{dfe_leo_provider}, REF 2021 results
+\citep{ref2021results} and REF 2014 results, ORCID-derived mobility records \citep{li2026orcid}, and the NRC data
+table of research-doctorate programmes \citep{nrc2011data}, whose terms allow personal, noncommercial use only, so it is
+not redistributed and no programme-level value from it is reported.
+
+\subsection*{Code availability}
+The analysis scripts, which are seeded and give
+byte-identical outputs on re-run, and the figure scripts with their shared style module are in the public repository
+\url{https://github.com/soray42/universities-not-departments}, which contains the code that reproduces every number,
+table and figure from these inputs; raw files are downloaded from their sources and are not redistributed.
+\SItab{tab:si-code} maps each section, table and figure to the script that produces it.
+
+% =====================================================================================================================
+% References: one list numbered in order of first citation, so Methods references continue the main-text numbering.
+\bibliographystyle{unsrtnat}
+\bibliography{refs_merged,refs_short,refs_nhb}
+
+\section*{Acknowledgements}
+I thank the creators of the faculty-hiring data for making them public and for releasing a corrected version, and the
+U.S. Department of Education, the U.S. Census Bureau, the UK Department for Education, UK Research and Innovation
+and the National Academies for publishing the data used here. This work received no specific funding.
+
+\section*{Author contributions}
+H.Y. conceived and designed the study, assembled and analysed the data, and wrote the manuscript.
+
+\section*{Competing interests}
+The author declares no competing interests.
+
+\end{document}

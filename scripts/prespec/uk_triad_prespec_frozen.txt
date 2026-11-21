@@ -1,0 +1,85 @@
+PRE-SPECIFICATION (written 2026-09-27, before any REF, UCAS or student-side data were read; the
+REF file had been downloaded but not opened. Anything not listed here is labelled exploratory in the
+write-up.)
+
+Student-side data. Preferred source: the OfS Discover Uni (Unistats) course-level dataset. It is
+hosted by HESA (www.hesa.ac.uk/support/tools-and-downloads/unistats); on 2026-09-27 every request from
+this machine to www.hesa.ac.uk (page and file URLs) returned HTTP 403 with 'cf-mitigated: challenge'
+(a Cloudflare browser challenge), and the Internet Archive returned HTTP 429, so it is NOT used.
+Fallbacks, in this order and fixed now:
+  S-LEO (primary student measure at CAH2): the intake attainment of the programme's graduates from
+      the LEO file itself = programme share of graduates with >= 360 UCAS tariff points (LEO prior-
+      attainment bands 1-2 over known bands; scripts/62's definition), pooled over cohorts
+      2013/14-2016/17 at YAG5 (counts summed over cohorts). It is an entry-tariff measure of the
+      students, published at provider x CAH2. Variant: mean band score (band 1 = 5 ... band 5 = 1,
+      band 6 = 0, over bands 1-6).
+  S-UCAS (the task's named fallback; demand): UCAS end-of-cycle provider x subject-group files in
+      data/raw/ucas (granularity documented by the script; per data/raw/SOURCES.md they are CAH level 1,
+      keyed by UCAS provider name, not UKPRN). Demand = main-scheme applications per accepted
+      applicant, pooled over the years in the files. Used only in the across-provider designs (T3b, T4)
+      on CAH1 groups that coincide with exactly one clean CAH2 subject below; UKPRN link by normalised
+      name through the LEO provider names.
+
+REF 2021. Overall quality profile of each submission; GPA = (4 %4* + 3 %3* + 2 %2* + 1 %1*) / 100;
+variant = %4*. Provider x UoA score = FTE-weighted mean over the provider's submissions to that UoA
+(multiple submissions). Institution score = FTE-weighted mean over all its submissions. Link to LEO by
+UKPRN.
+
+Crosswalk CAH2 (LEO subject names) -> UoA, fixed now:
+  CLEAN (primary; one UoA is the research home of the subject and the subject is that UoA's principal
+  teaching counterpart): Psychology 4; Biosciences 5; Chemistry 8; Physics and astronomy 9;
+  Mathematical sciences 10; Computing 11; Engineering 12; Architecture, building and planning 13;
+  Economics 16; Business and management 17; Law 18; Politics 19; Education and teaching 23;
+  Sport and exercise sciences 24; English studies 27.
+  EXTENDED (sensitivity; many-to-many; a multi-UoA subject gets the FTE-weighted GPA over the mapped
+  UoAs the provider submitted to): Medicine and dentistry 1; Allied health 3; Nursing and midwifery 3;
+  Pharmacology, toxicology and pharmacy 3; Agriculture, food and related studies 6; Veterinary sciences
+  6; Geography, earth and environmental studies 7+14; Materials and technology 12; Sociology, social
+  policy and anthropology 20+21+22; History and archaeology 15+28; Philosophy and religious studies
+  30+31; Languages and area studies 25+26; Creative arts and design 32; Performing arts 33; Media,
+  journalism and communications 34.
+  UNMAPPED: Medical sciences; General, applied and forensic sciences; Health and social care; Combined
+  and general studies; UoA 2 (Public health) and UoA 29 (Classics).
+  Coverage is reported (cells, providers, graduates, REF FTE).
+
+Common design. LEO: all graduates, YAG5, cohorts 2013/14-2016/17 (scripts/62), log median earnings.
+Unit = provider x CAH2 'programme'; pay = mean of the released log medians over those cohorts.
+Providers: LEO HEIs with a REF submission in the mapped UoA(s), minus scripts/62's exclusions (University
+of London umbrella, Open University, Birkbeck). A subject enters when >= 15 providers (scripts/62's
+NMIN) have the scores the analysis needs. Rank z = within-subject midrank of the REF GPA over the
+providers of that subject's cell, standardised to SD 1 within the subject ('per SD').
+
+  T1 external validity of G. Spearman, across scripts/62's primary providers with REF, of
+     institution-level REF GPA with G. 95% CI: provider bootstrap (percentile). Variant: %4*.
+  T2 department level.
+     (a) Within provider: OLS  pay_ps = a_p + g_s + b z_ps + e  on the CLEAN sample (providers with
+         >= 2 subjects; singletons dropped iteratively). b = log points of pay per within-subject SD
+         of the REF GPA rank. CI: provider-clustered CR1 (t, G-1 df), and a provider cluster bootstrap
+         (percentile) alongside. MDE (80% power, 5% two-sided) = 2.80 x CR1 SE. Compared with the US
+         within-institution slope of scripts/58 (institution FE + field FE: +0.0129; main spec with
+         field-specific slopes on institution traits: +0.0084), read from SELECTIVITY_DEEP_RESULT.md.
+         Sensitivities: EXTENDED sample; raw GPA z instead of rank; %4*; + subject x {zG, zS} slopes
+         (zS = institution share of graduates with >= 360 points, scripts/62; the analogue of the US
+         main spec; primary providers only); + programme intake control (S-LEO).
+     (b) Within subject, across providers: per subject, Spearman(REF GPA, pay) vs Spearman(G, pay) on
+         the same providers (scripts/62 primary providers with REF); mean over subjects; difference
+         REF - G; partials rho(REF, pay | G) and rho(G, pay | REF). CI: two-stage bootstrap (subjects
+         outer; providers within subject inner, as scripts/62).
+  T3 students: the T2 designs with the student measure as the outcome.
+     (a) Within provider: the T2(a) regression with S-LEO as the outcome; for the comparison, outcome
+         and pay are each divided by their within-subject SD over the same cells (SD units); test =
+         b_student - b_pay (paired provider cluster bootstrap; CR1 of the stacked system alongside).
+         'Does student selectivity track department research standing within a university more than pay
+         does?' = this difference.
+     (b) Across providers: Spearman(REF, student) vs Spearman(REF, pay), and Spearman(G, student) vs
+         Spearman(G, pay), same cells; two-stage bootstrap.
+  T4 triad agreement: per CLEAN subject, pairwise Spearman across providers among REF GPA (academic),
+     pay (employer) and S-LEO (students), on providers with all three; averaged over subjects; 95% CI
+     from a subject bootstrap (subjects resampled); pairwise differences paired; 'which pair agrees
+     most' = highest mean, with the bootstrap share of replicates in which each pair is highest.
+     Two-stage (subject + provider) CI alongside. S-UCAS demand in the same design on the CAH1 groups
+     that coincide with one clean CAH2 subject.
+  Reading rule: a pre-specified quantity or difference is 'detected' if its 95% CI excludes 0, else
+  'not detected' and reported with its MDE (2.80 SE; SE from the stated CI method, bootstrap SD where
+  the CI is a bootstrap). Language is descriptive; no estimate is read as causal.
+

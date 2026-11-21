@@ -1,0 +1,1638 @@
+\documentclass[11pt]{article}
+% =====================================================================================================================
+% si.tex -- Supplementary Information for main.tex (Haotian Yang). Compile before main.tex: main.tex reads si.aux
+% through xr for its SI pointers.
+% =====================================================================================================================
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}
+\setlength{\emergencystretch}{3em}
+
+\newtheorem{sprop}{Proposition}
+\newtheorem{slemma}{Lemma}
+\newtheorem{scor}{Corollary}
+\newtheorem{sremark}{Remark}
+\renewcommand{\thesprop}{S\arabic{sprop}}
+\renewcommand{\theslemma}{S\arabic{slemma}}
+\renewcommand{\thescor}{S\arabic{scor}}
+\renewcommand{\thesremark}{S\arabic{sremark}}
+\newcommand{\qedsq}{\hfill$\square$}
+\newcommand{\ci}[2]{$[#1,\allowbreak\,#2]$}
+
+\title{\bfseries Supplementary Information for\\ ``Universities, not departments: where academic
+prestige meets graduate pay''}
+\author{Haotian Yang}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This appendix documents what the main text cites, plus two further analyses of the same data on an
+occupational demand index and on entry conditions (Section~\ref{sec:si-demand}); its contents are listed below. Each
+table names its interval type. Section~\ref{sec:si-prereg} gives, for each analysis, whether it was specified before
+or after related results had been seen, and Section~\ref{sec:si-code} names the seeded script of the public
+repository that produces the numbers of each section, table and figure. The analysis is descriptive throughout.
+
+\tableofcontents
+
+% =====================================================================================================================
+\section{Data and samples}\label{sec:si-data}
+
+Table~\ref{tab:si-data} lists the sources and Table~\ref{tab:si-flow} the samples of each main analysis. Provenance
+(URLs, releases, access dates, licences) is recorded in \texttt{data/sources.csv} of the repository.
+
+\begin{table}[!htbp]
+\centering
+\caption{Data sources. All sources are public.}\label{tab:si-data}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{3.9cm}@{}}
+\toprule
+Source & Unit and release & Use & Known limitation \\
+\midrule
+Faculty-hiring ranks \citep{wapman2026data, wapman2022quantifying} & institution $\times$ field; published SpringRank ranks from faculty employed 2011--2020 at 368 PhD-granting US institutions; 2026 regeneration (GitHub commit 841e9c9) & department rank $F$ and university-wide rank $G$ & the earlier public export \citep{wapman2022data} had a truncated edge list, and an earlier version of this analysis used it; the ranks describe the 2011--2020 faculty \\
+College Scorecard, field of study \citep{scorecard} & institution $\times$ CIP-4; bachelor's median earnings 4 years after completion (1 and 5 years as replications); June 2026 release & US pay & Title IV-aided completers who work and are not enrolled; medians; one set of medians per OPEID6 \\
+College Scorecard, institution files \citep{scorecard} & most recent (2026) and historical files & mean SAT, admission rate, Pell share, control, state earnings level & measured for the university, not the programme \\
+PSEO \citep{pseo, pseo2026} & institution $\times$ CIP-4 $\times$ 3-year cohort; medians 1, 5, 10 years after graduation; V4.14.1 & career time; second source for the field map & partners mostly public; few top-ranked private universities \\
+REF 2021 \citep{ref2021results} and REF 2014 (provenance in \texttt{data/sources.csv}) & institution $\times$ unit of assessment; grade-point average & UK department measure (REF 2021); REF 2014 for test--retest reliability and one variant & a rating of research outputs, environment and impact, not of hiring \\
+DfE LEO provider file \citep{dfe_leo_provider} & provider $\times$ CAH2 subject $\times$ cohort $\times$ years after graduation (1, 3, 5); also by prior-attainment band & UK pay and intake; cohorts 2013/14 to 2016/17 & band counts rounded; cells of 1--2 graduates suppressed \\
+ORCID-derived mobility edges \citep{li2026orcid}; ROR \citep{ror2026data} & doctorate-to-faculty moves in Great Britain & UK university-wide rank $G$ (SpringRank of 11,987 moves) & self-reported careers; no field axis \\
+NRC assessment of research-doctorate programmes \citep{nrc2011data} & programme; research measures for 2005--06; Excel data table revised 29 April 2011 & positive control (Section~\ref{sec:si-pcp}) & personal, noncommercial use only; not redistributed; doctoral departments only \\
+ABET, AACSB, Nobel Prize API, IPEDS (Section~\ref{sec:si-events}) & first accreditation dates; laureate affiliations; completions & event studies & see Section~\ref{sec:si-events} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Sample flow of the main analyses. Each row is the sample of the analyses named in it; samples nest only
+where the text says so. The field and university counts of the matched and canonical US rows come from the check
+described in Section~\ref{sec:si-data}.}\label{tab:si-flow}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+Step & Sample & Used for \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{United States}} \\
+Ranked institutions in the 2026 release; fields of the crosswalk with a 2026 rank & 368 institutions; 65 fields (teacher education in specific subjects has no 2026 rank) & \\
+Matched by institution name to Scorecard bachelor's programmes with a released four-year median & 4,726 programmes, 283 universities, 64 fields & \\
+Canonical: fields with at least 15 matched universities & 4,676 programmes, 282 universities, 55 fields & field map (main-text Fig.~4A), mean agreement \\
+Fields with at least 8 matched universities & 58 fields; 57 with a computable pay-noise variance & heterogeneity across fields; Scorecard against PSEO; $F$ against $G$ \\
+Base regression: universities with at least two fields, fields with at least 15 universities (pruned jointly) & 4,645 programmes, 251 universities, 55 fields & slopes with field fixed effects, and with university and field fixed effects (Table~\ref{tab:si-slopes}) \\
+Main design: as the base regression, with mean SAT, admission rate, Pell share and $G$ observed & 3,961 programmes, 214 universities, 53 fields & two-level contrast, calibrated test, main slope and its variants \\
+Selectivity (SAT sample), broad controls & 51 fields; 3,860 programmes with both 2026 and entry-year controls & selectivity and entry-year controls \\
+Computer science remainder & 164 computer science programmes (3,296 programmes, 209 universities) & Table~\ref{tab:si-slopes} \\
+Positive control: base regression cells with one clean NRC match in a same-name field & 1,484 programmes, 173 universities, 24 fields & Table~\ref{tab:si-pcp}; main-text Fig.~2A \\
+Prediction: main design (task 1); universities with at least three programmes (task 2) & 3,961 programmes, 214 universities; 3,935 programmes, 201 universities & Table~\ref{tab:si-pred}; main-text Fig.~2B \\
+PSEO fixed cohorts 2001--2003 to 2010--2012, institutions observed at 1, 5 and 10 years & 40 fields, 127 institutions, 143 field $\times$ cohort cells (141 with coverage data) & career time \\
+PSEO surface of graduation windows and horizons, same institutions in every cell & 27 fields, 17 cells & career-time bound \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{United Kingdom}} \\
+LEO provider $\times$ subject, subjects with at least 15 providers & 33 subjects & field map (main-text Fig.~4B), careers, pay scales \\
+Programmes matched to a REF unit of assessment & 864 programmes, 111 providers, 15 subjects & two-level contrast and calibrated test \\
+\quad with REF 2014 and REF 2021 ratings & 781 programmes, 105 providers & REF test--retest reliability \\
+UK slope design & 900 programmes, 116 providers, 15 subjects; 893 / 114 with $G$ and selectivity; 873 / 114 with intake; 871 / 112 with REF 2014 & Table~\ref{tab:si-slopes} \\
+Universities with $G$ and a REF grade-point average & 131 universities & $G$ against REF \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Release and name join.} The hiring ranks come from the 2026 regeneration of the data of
+\citet{wapman2022quantifying} \citep{wapman2026data}. The earlier
+public export \citep[Zenodo version 1;][]{wapman2022data} omitted every doctorate-to-employer pair in which no man or
+no woman was hired, and its rank file was not the published ranking; an earlier version of this analysis used it. With the
+complete 2026 edges, SpringRank on the edges among each network's ranked institutions reproduces the published rank
+(Spearman correlation at least 0.9997 in all 116 networks). Programmes are matched to departments by normalised
+institution name; 65 institutions whose Scorecard names carry campus or city qualifiers are paired by hand with one
+IPEDS unit, each pair checked against the official names, city, state and Carnegie class, so that 356 of the 368
+ranked institutions are matched. When a value from that earlier analysis is set beside one here, the samples differ. The
+reliability-corrected department slope, for example, was about 1\% to 3\% per SD on the earlier export, is about
+1.5\% on the 2026 data with the earlier name join, and about 0.8\% with the repaired join (Section~\ref{sec:si-slope}).
+
+\paragraph{Pay pooled within an OPEID6.} Scorecard reports field-of-study medians per OPEID6, so campuses that share
+one carry identical medians for their shared programmes. In the main design, Rutgers New Brunswick and Rutgers Camden
+share an OPEID6 and overlap in 12 fields, with the same pay and different $F$; Rutgers--Newark has no programme in
+that sample. Dropping Camden gives an across correlation of $+0.449$, a within correlation of $+0.046$ and a main
+slope of $+0.0055$; dropping both Rutgers campuses gives $+0.448$, $+0.045$ and $+0.0052$ (full sample: $+0.448$,
+$+0.047$ and $+0.0056$). In all, 31 universities of the main design have pay pooled with another campus of their
+OPEID6, often a branch campus. Dropping all of them gives an across correlation of $+0.477$, a within correlation of
+$+0.044$ and a main slope of $+0.0069$ (3,140 programmes, 183 universities, 49 fields).
+
+\paragraph{Checks and re-baseline comparisons.} A few numbers come from checks on existing cells rather than from
+the main analyses: the US university-mean correlation (Section~\ref{sec:si-contrast}), the size of one within-field
+SD of $F$ in rank places (Section~\ref{sec:si-slope}), the OPEID6 sensitivity above and the university counts of the
+matched and canonical US samples (Table~\ref{tab:si-flow}). They use the main-design cells as rebuilt independently
+from the raw files, which reproduce the across and within correlations of Section~\ref{sec:si-contrast} to four
+decimals. The comparison with the earlier name join comes from the same rebuild run with that join, and the
+reproduction of the published rank from the conversion of the 2026 release (Section~\ref{sec:si-code}); the values on
+the earlier export are those of the earlier version of this analysis and are quoted for comparison only.
+
+\paragraph{Sampling noise of pay medians.} Every analysis that propagates pay noise uses the large-sample standard
+error of a median under normality, $\mathrm{SE}\approx\sqrt{\pi/2}\,\sigma/\sqrt n\approx1.2533\,\sigma/\sqrt n$,
+with $\sigma=\mathrm{IQR}/1.349$. For a PSEO row, $n$ and the interquartile range are the row's own released
+earner count and quartiles. Scorecard releases no spread, so for a Scorecard median $n$ is the count of working,
+not-enrolled completers and $\sigma=d_f\times\text{median}/1.349$, where $d_f$ is the field's median relative
+interquartile range, $(p_{75}-p_{25})/p_{50}$, over PSEO bachelor's institution $\times$ CIP-4 rows five years after
+graduation (the CIP-2 pool where a field has fewer than 10 rows). A programme that pools several CIP-4 rows takes the
+count-weighted mean of their medians, with $\mathrm{SE}^2=\sum_jw_j^2\mathrm{SE}_j^2/(\sum_jw_j)^2$. For LEO, $n$ is
+the number of graduates with earnings and the quartiles are the cohort's own (the subject's median relative
+interquartile range where they are not released); a programme's pay is the mean of its cohorts' log medians, with
+variance $\sum_k\mathrm{SE}_k^2/K^2$ over its $K$ released cohorts. SE divided by the median is the SE on the log
+scale. This noise enters three analyses: the pay reliability of the two-level contrast, one minus the noise share of
+the residual variance (Table~\ref{tab:si-reliab}); the simulated pay medians of the calibrated test
+(Section~\ref{sec:si-calib}); and the heterogeneity analysis below, which perturbs every median by its SE in 2,000
+draws, recomputes each field's coupling, and refits the heterogeneity statistics with the added noise variance and
+with each coupling disattenuated by its field's pay reliability. PSEO also adds disclosure-avoidance noise to its
+statistics, and Scorecard documents a perturbation of its earnings. Neither is modelled beyond the sampling noise
+above, except in an exploratory variant of the heterogeneity analysis that adds the Scorecard perturbation.
+
+\paragraph{Heterogeneity across fields.} Propagating the noise lowers the heterogeneity share of the
+between-field variance ($I^2$) from 0.73 to 0.57 \ci{0.36}{0.79} on 57 fields: the 58 fields with at least 8
+universities of Table~\ref{tab:si-flow}, less atmospheric sciences, whose noise variance cannot be computed;
+dropping such a field changes nothing on the earlier data. The ratio of the two, 0.78 \ci{0.58}{0.98}
+(two-way interval), lies above the pre-specified line of 0.75, so most of the heterogeneity remains, although the
+interval crosses that line. The noise-corrected ordering of the fields has a Spearman correlation of 0.951
+\ci{0.907}{0.996} with the original, so the ordering survives by the pre-specified rule. Adding the Scorecard
+perturbation moves the ratio to between 0.74 and 0.76 and the ordering correlation to between 0.88 and 0.93.
+
+% =====================================================================================================================
+\section{The two-level contrast}\label{sec:si-contrast}
+
+\subsection{Statistics}
+
+Each ordering is converted to Blom normal scores within field (US) or subject (UK) and standardised there. We use
+three statistics, and they are different statistics, not parts of one: the gap between the across and the within
+value is not a decomposition, and it is not a share of agreement explained by the university. The \emph{across}
+statistic is the Pearson correlation of the scores over all programmes, with field or subject means removed. It is a
+within-field total correlation: it mixes variation between universities with variation between the departments of one
+university. The \emph{within} statistic is the Pearson correlation of the scores' residuals on university and field
+fixed effects. The \emph{pure between-university} statistic is the Pearson correlation, over universities, of the
+university means of the field-demeaned scores. In the UK it is $+0.781$ \ci{+0.711}{+0.840} for REF--pay, $+0.794$
+\ci{+0.724}{+0.852} for REF--intake and $+0.795$ \ci{+0.715}{+0.854} for pay--intake (provider cluster bootstrap). In
+the US it is $+0.693$ \ci{+0.621}{+0.754} for $F$ and pay (214 universities; university cluster bootstrap, 2,000
+draws, re-demeaning within field in each draw as for the UK; a check described in Section~\ref{sec:si-data}). All
+four lie above the across values, as expected for a statistic that excludes the within-university variation.
+
+\paragraph{What the within statistic holds fixed.} University fixed effects remove a university's average score over
+its fields. If an ordering loads on a university trait $a_i$ with a weight $\alpha_f$ that differs by field, the
+within residual keeps the term $(\alpha_f-\bar\alpha_i)a_i$, where $\bar\alpha_i$ is the mean weight over the
+university's fields, so the within statistic is not purely departmental. Field-specific slopes on university traits,
+as in the stricter US contrast below, remove part of this term (Remark~\ref{rem:within}). Field fixed effects, in turn,
+hold the field fixed: the within statistic compares a department's standing relative to the other departments of its
+university with their graduates' pay relative to each other, and it says nothing about the value of choosing one
+field over another or about comparing universities within a field.
+
+\subsection{Reliabilities}
+
+Table~\ref{tab:si-reliab} gives the reliabilities of the within-university residuals. The REF reliability is the
+within-provider correlation of residualised REF 2021 and REF 2014 scores, read as a test--retest reliability; real
+change between the exercises lowers it. The pay reliability is one minus the share of the residual variance due to
+the sampling noise of each median (Section~\ref{sec:si-data}). The intake reliability is an odd/even-cohort split half
+stepped up with the Spearman--Brown formula \citep{spearman1910correlation, brown1910some}. Under the simulation model
+of Section~\ref{sec:si-calib}, this split half overstates the reliability of the intake score with respect to latent
+intake (0.524 estimated against 0.357 true). The share is floored, published in rounded bands and noisier in small
+programmes.
+
+\paragraph{Reliability of the hiring rank.} The field-level reliability of $F$ is a split-half reliability: the hiring
+edges of a field are split at random into halves, SpringRank is computed on each, and the correlation of the two is
+stepped up with the Spearman--Brown formula. Because the public SpringRank on the complete 2026 edges
+reproduces the published rank, this is the sampling reliability of the published rank itself, 0.889 on average over 58
+fields (0.71 to 0.96); we call it the public-edge reliability. We also extrapolate it to all US-doctorate
+hires (0.915 on average). On the earlier export this extrapolation corrected for hires missing from the public edges;
+with complete edges it does not, and we keep it only as a sensitivity. $G$, which pools all fields, has a reliability
+of 0.972.
+
+\paragraph{Residual reliability of $F$.} A within-university statistic needs the reliability of $F$ net of the design,
+$\lambda$: one minus the share of the residual variance of $F$ that is sampling error, with error variance
+$1-\mathrm{rel}_f$ for each programme on its field's standardised scale. Three versions are used. (a) The formula
+of the slope analysis keeps the error variance that survives the university fixed effects (a factor $1-1/n_i$ for a
+university with $n_i$ programmes). On $z$-scores of $F$ in the main slope design it gives 0.654 (public-edge) and 0.719
+(extrapolated); it is used for the reliability correction of the slope (Table~\ref{tab:si-slopes}). (b) The same
+formula on the normal scores of the contrast design gives 0.652 (main design) and 0.683 (fixed effects only); the
+pre-specified rule uses it for the main design (Table~\ref{tab:si-rule}), and the simulation applies it to the
+simulated data sets. (c) The full-leverage version keeps the error variance that the whole design leaves (the
+diagonal of the annihilator times the error variance), as the pay reliability does. It gives 0.682 (main design) and
+0.688 (fixed effects only) and is used for the corrected within correlations of Tables~\ref{tab:si-reliab}
+and~\ref{tab:si-rule} and of Section~\ref{sec:si-model-based}. Within a design and a reliability variant, the three
+versions differ by about 0.03 at most.
+
+\paragraph{Correlated errors of $F$ and $G$.} $G$ pools the hiring edges of all fields, including those behind each
+$F$, so the sampling errors of the two ranks may be correlated, which none of the reliabilities above allows for. This
+affects the comparisons of $F$ with $G$ (Table~\ref{tab:si-map}) and the joint loadings of pay on $F$ and $G$
+(Section~\ref{sec:si-career}). It does not affect the contrast with fixed effects only, which uses $F$ alone.
+
+\begin{table}[!htbp]
+\centering
+\caption{Reliabilities used in the two-level contrast. UK intervals: provider cluster bootstrap (2,000 replicates).
+US intervals: delete-one-institution jackknife. US $\lambda$ here is version (c), with the full leverage of the
+design; the reliability correction of the slope (Table~\ref{tab:si-slopes}) uses version (a), which gives
+0.654.}\label{tab:si-reliab}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Measure (level) & Reliability [95\% CI] & Sample \\
+\midrule
+UK REF rating, within providers (REF 2014--2021 test--retest) & $0.521$ \ci{0.452}{0.587} & 781 programmes, 105 providers \\
+UK pay, within providers (median sampling noise) & $0.836$ \ci{0.795}{0.862} & 864 programmes, 111 providers \\
+UK intake, within providers (split half; suppressed cells $=1$) & $0.524$ \ci{0.384}{0.637} & 864 programmes, 111 providers \\
+UK intake, within providers (split half; suppressed cells $=0$) & $0.762$ \ci{0.658}{0.836} & 853 programmes, 111 providers \\
+US $F$ net of university and field effects, $\lambda$ public-edge & $0.688$ \ci{0.667}{0.710} & 3,961 programmes, 214 universities \\
+US $F$ net of university and field effects, $\lambda$ extrapolated & $0.747$ \ci{0.729}{0.764} & same \\
+US pay net of university and field effects & $0.548$ \ci{0.512}{0.585} & same \\
+US $F$ net of the main design, $\lambda$ public-edge & $0.682$ \ci{0.658}{0.707} & same \\
+US $F$ across universities within field, public-edge & $0.918$ \ci{0.908}{0.929} & same \\
+US pay across universities within field & $0.780$ \ci{0.759}{0.801} & same \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The pre-specified rule is not a calibrated test}\label{sec:si-rule}
+
+The rule fixed before the analysis uses the disattenuated within correlation, $r/\sqrt{\mathrm{rel}_x
+\mathrm{rel}_y}$. A pair ``agrees less within universities'' if the upper 95\% bound of that correlation lies below
+the across point estimate, and the rule says ``cannot distinguish'' otherwise. Applied as specified, it returns
+``agree less within'' for all three UK pairs and for US $F$ and pay (Table~\ref{tab:si-rule}). Simulation under equal
+agreement at both levels (Section~\ref{sec:si-calib}) shows that the rule's false-positive rate exceeds its nominal
+5\% for UK pay--intake and, much more, for the US pair. On linear within-subject $z$-scores instead of normal scores,
+the UK rates are 0\%, 41\% and 53\% for REF--pay, REF--intake and pay--intake. Two reasons
+combine. Normal scores computed within subject lower the within correlation even without noise, and the intake split
+half overstates intake reliability. In the US the rule corrects for noise in $F$ only, so pay noise pulls the within
+value down. The verdicts are kept because they were pre-specified; they are not used as evidence.
+
+\begin{table}[!htbp]
+\centering
+\caption{The pre-specified rule: verdicts on the data and false-positive rates under equal agreement. Disattenuated
+within correlations with 95\% cluster-bootstrap CIs (2,000 replicates). False-positive rate: share of 120 null data
+sets, each with its own 200-replicate bootstrap, in which the rule says ``agree less within''; Monte Carlo SE in
+parentheses. UK normal-score version. US rows use the public-edge reliability of $F$. $^a$Institution and field fixed
+effects only, $\lambda$ in version (c), 0.688; the simulated false-positive rate applies version (b). The
+main-design row uses version (b), $\lambda=0.652$; version (c) gives 0.682 (Table~\ref{tab:si-reliab}) and version
+(a), as used for the slope correction, 0.654.}\label{tab:si-rule}
+\small
+\begin{tabular}{@{}llllc@{}}
+\toprule
+Pair & Disattenuated within & Across & Verdict & False-positive rate \\
+\midrule
+UK REF--pay & $+0.156$ \ci{+0.043}{+0.262} & $+0.625$ & agree less within & 0.8\% (0.8) \\
+UK REF--intake & $+0.287$ \ci{+0.140}{+0.438} & $+0.677$ & agree less within & 1.7\% (1.2) \\
+UK pay--intake & $+0.251$ \ci{+0.102}{+0.408} & $+0.699$ & agree less within & 16.7\% (3.4) \\
+US $F$--pay, main design & $+0.035$ \ci{-0.003}{+0.081} & $+0.448$ & agree less within & -- \\
+US $F$--pay, fixed effects only$^a$ & $+0.056$ \ci{+0.018}{+0.094} & $+0.448$ & agree less within & 80.8\% (3.6) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Calibrated simulation test}\label{sec:si-calib}
+
+The calibrated test (added after the first results had been seen) is a parametric bootstrap. Latent scores are
+$T_k=u_k[i]+v_k[p]$ for each ordering $k$ on the real programmes $p$ and universities $i$, with
+$\mathrm{Var}(u_k)=\pi_k$, $\mathrm{Var}(v_k)=1-\pi_k$, $\mathrm{corr}(u)=\rho_{\mathrm{between}}$ and
+$\mathrm{corr}(v)=\rho_{\mathrm{within}}$. The university component $u_k[i]$ is common to all fields of a university:
+the simulation has no field-specific loadings on university traits. Observed measures are generated as the data are
+made. In the UK, REF 2021 and REF 2014 are the latent score plus independent normal error. Pay is the mean over each
+programme's released cohorts of log medians, each with that cohort's own sampling noise
+(Section~\ref{sec:si-data}). Intake is a binomial count per cohort, split into bands with the subject's band shares
+and published with LEO's rounding and suppression. In the US, $F$ carries classical error at its field's
+public-edge reliability (the extrapolated reliability is a sensitivity) and pay each programme's sampling noise.
+Every simulated data set passes through the full pipeline: scores, fixed effects and reliabilities. Nuisance
+parameters are fitted on the same data, by indirect inference (12 rounds of 64 data sets) to the observed
+within-university variance shares, the REF test--retest correlation and each subject's mean and SD of the intake
+share. Under the null a common $\rho$ per pair is calibrated to the observed across correlation. The one-sided $P$
+is $(1+\#\{\text{null}\le\text{observed}\})/(1+N)$ with $N=600$ null data sets, so $P=0.0017$ means that no
+simulated within value is as low as the observed one. The test therefore rejects equal agreement under the fitted
+measurement model. The nuisance parameters are estimated from the same data and are held fixed across the test's own
+null draws; Section~\ref{sec:si-audit} audits the size of the whole procedure, re-estimating them in every simulated
+data set, and varies the latent structure.
+
+\begin{table}[!htbp]
+\centering
+\caption{Calibrated test of equal agreement within and between universities. Null columns: mean and central 95\%
+(2.5th to 97.5th percentile) over 600 null data sets; these are ranges of simulated values, not CIs. The null
+across correlations reproduce the observed ones by construction. US: 3,961 programmes, 214 universities, 53
+fields.}\label{tab:si-calib}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Pair & Null $\rho$ & Across & Null across [2.5\%, 97.5\%] & Within & Null within [2.5\%, 97.5\%] & $P$ \\
+\midrule
+US $F$--pay & 0.551 & $+0.448$ & $+0.447$ \ci{+0.371}{+0.516} & $+0.047$ & $+0.311$ \ci{+0.282}{+0.340} & 0.0017 \\
+US $F$--pay (extrap.\ reliability) & 0.546 & $+0.448$ & $+0.452$ \ci{+0.376}{+0.522} & $+0.047$ & $+0.322$ \ci{+0.291}{+0.352} & 0.0017 \\
+UK REF--pay & 0.706 & $+0.625$ & $+0.624$ \ci{+0.528}{+0.703} & $+0.103$ & $+0.442$ \ci{+0.376}{+0.498} & 0.0017 \\
+UK REF--intake & 0.819 & $+0.677$ & $+0.675$ \ci{+0.601}{+0.742} & $+0.150$ & $+0.357$ \ci{+0.283}{+0.419} & 0.0017 \\
+UK pay--intake & 0.802 & $+0.699$ & $+0.698$ \ci{+0.620}{+0.761} & $+0.166$ & $+0.427$ \ci{+0.356}{+0.491} & 0.0017 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On linear within-subject $z$-scores instead of normal scores, the test also gives $P=0.0017$ for all three UK pairs,
+although the model reproduces the linear statistics less well for the intake pairs. The disattenuated within
+correlations give $P=0.0017$ as well. The analysis script also reports model checks: simulated against observed
+variance shares, REF test--retest, intake split half and intake moments.
+
+\subsection{Model-based estimates}\label{sec:si-model-based}
+
+Freeing $\rho_{\mathrm{within}}$ and matching both the observed within and across correlations gives the
+model-based estimates in Table~\ref{tab:si-model}. They describe the latent model, not the data directly, and we use
+them only to illustrate magnitudes. Their intervals are approximate: $\pm1.96$ times the simulated SD of the within
+correlation, scaled by $\rho_{\mathrm{within}}$ over its simulated mean, with the nuisance parameters held at their
+fitted values, so they leave out the uncertainty of those parameters.
+
+\begin{table}[!htbp]
+\centering
+\caption{Model-based within- and between-university correlations (simulation calibration, 300 final data
+sets).}\label{tab:si-model}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Pair & $\rho_{\mathrm{within}}$ [approx. 95\% interval] & $\rho_{\mathrm{between}}$ & Fit: within, across (simulated vs observed) \\
+\midrule
+US $F$--pay, public-edge reliability & $0.081$ \ci{0.028}{0.135} & 0.701 & $+0.049$ vs $+0.047$; $+0.447$ vs $+0.448$ \\
+US $F$--pay, extrapolated reliability & $0.075$ \ci{0.022}{0.128} & 0.703 & $+0.044$ vs $+0.047$; $+0.445$ vs $+0.448$ \\
+UK REF--pay & $0.160$ \ci{0.045}{0.276} & 0.854 & $+0.103$ vs $+0.103$; $+0.625$ vs $+0.625$ \\
+UK REF--intake & $0.350$ \ci{0.186}{0.513} & 0.899 & $+0.152$ vs $+0.150$; $+0.675$ vs $+0.677$ \\
+UK pay--intake & $0.314$ \ci{0.177}{0.450} & 0.892 & $+0.171$ vs $+0.166$; $+0.702$ vs $+0.699$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For the US pair, correcting both levels for noise in $F$ (public-edge reliability) and in pay gives $+0.076$
+\ci{+0.025}{+0.129} within universities against $+0.529$ \ci{+0.475}{+0.589} across them (cluster bootstrap). The
+stricter US within contrast, net of field-specific slopes on SAT, admission rate, Pell share and $G$, is $+0.028$
+\ci{-0.002}{+0.064}, an interval that includes zero; it is not simulated, because the latent model has no university
+traits.
+
+\subsection{Robustness subsets}
+
+Table~\ref{tab:si-robust} rebuilds the whole pipeline on two UK subsets and applies the pre-specified rule. Dropping
+programmes whose intake share is zero selects on a noisy variable, since the zero floor is partly measurement, so
+it also changes the error structure. In both subsets the rule can no longer separate the levels for some pairs that
+involve intake; REF--pay keeps ``agree less within'' throughout. The rule is the miscalibrated one of
+Section~\ref{sec:si-rule}, and the calibrated test was not run on these subsets, so the table is descriptive only.
+
+\begin{table}[!htbp]
+\centering
+\caption{Robustness subsets (UK, pre-specified rule). Disattenuated within correlations with 95\% provider
+cluster-bootstrap CIs (500 replicates); the across correlation on the same subset is the rule's
+threshold.}\label{tab:si-robust}
+\small
+\begin{tabular}{@{}llccl@{}}
+\toprule
+Subset & Pair (scores) & Disattenuated within & Across & Verdict \\
+\midrule
+Intake share $>0$ & REF--pay (normal) & $+0.199$ \ci{+0.079}{+0.313} & $+0.609$ & agree less within \\
+(755 programmes) & REF--pay (linear) & $+0.158$ \ci{+0.024}{+0.288} & $+0.605$ & agree less within \\
+ & REF--intake (normal) & $+0.390$ \ci{+0.189}{+0.721} & $+0.666$ & cannot distinguish \\
+ & REF--intake (linear) & $+0.156$ \ci{+0.033}{+0.263} & $+0.577$ & agree less within \\
+ & pay--intake (normal) & $+0.487$ \ci{+0.289}{+0.937} & $+0.705$ & cannot distinguish \\
+ & pay--intake (linear) & $+0.300$ \ci{+0.105}{+0.463} & $+0.757$ & agree less within \\
+\midrule
+Graduates in the earnings & REF--pay (normal) & $+0.270$ \ci{+0.117}{+0.437} & $+0.579$ & agree less within \\
+data $\ge$ median & REF--pay (linear) & $+0.228$ \ci{+0.054}{+0.404} & $+0.597$ & agree less within \\
+(375 programmes) & REF--intake (normal) & $+0.496$ \ci{+0.260}{+0.791} & $+0.612$ & cannot distinguish \\
+ & REF--intake (linear) & $+0.245$ \ci{+0.060}{+0.495} & $+0.542$ & agree less within \\
+ & pay--intake (normal) & $+0.446$ \ci{+0.286}{+0.602} & $+0.673$ & agree less within \\
+ & pay--intake (linear) & $+0.437$ \ci{+0.290}{+0.820} & $+0.726$ & cannot distinguish \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Calibration audit}\label{sec:si-audit}
+
+We audit the calibrated test in four ways, T1 to T4 (specified after the results above had been seen and before any
+of their outcomes was computed, except the post hoc loading families of T2 (a)). The audit first reproduces
+the nulls and model-based estimates of Sections~\ref{sec:si-calib} and~\ref{sec:si-model-based}.
+
+\paragraph{T1: size of the whole procedure.} In each of 200 data sets simulated under equal agreement on the real
+layout, the nuisance parameters are re-estimated from that data set exactly as the calibrated test estimates them on
+the real data, and the full test is run with 200 null draws. Table~\ref{tab:si-size} gives the share of data sets in
+which the
+test rejects at 5\%, at the fitted nuisance parameters and at two perturbed settings that put every reliability at the
+low or the high end of its 95\% interval. The perturbations mean different things in the two countries. In the UK the
+REF and intake reliabilities are re-estimated by the test itself, so moving them moves the true parameter point and the
+test refits to it; only the UK pay noise is misspecified for the analyst, with a true variance 1.25 times the assumed
+one at the low setting and 0.84 times at the high setting. In the US the error variance of $F$ is 1.069 and 0.931 times
+the assumed one and the pay noise variance 1.082 and 0.918 times, misspecifications of about 8\%. At the fitted values
+the sizes lie near the nominal 5\%. At the low setting the intervals lie wholly above 0.075 for UK REF--pay, UK
+pay--intake and US $F$--pay, the last at 0.245. With 200 data sets an interval around 0.07 runs from 0.04 to 0.12, so
+the audit cannot separate a size of 0.05 from one of 0.10; the pre-specified binary reading (``calibrated'' if the size
+is at most 0.075) is kept only where the interval lies wholly on one side of 0.075. Power against the fitted within and
+between values is 1.000 \ci{0.982}{1.000} for every pair.
+
+\begin{table}[!htbp]
+\centering
+\caption{T1: empirical size of the calibrated test at the 5\% level, with the nuisance parameters re-estimated in
+each of 200 simulated data sets (200 null draws each); Clopper--Pearson 95\% intervals. Fitted: the null of the
+calibrated test (Section~\ref{sec:si-calib}). Low / high: every reliability at the lower / upper end of its 95\%
+interval. US: $F$--pay with fixed effects only, main design. Sizes are pre-specified quantities; the intervals were
+added after the results had been seen.}\label{tab:si-size}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Pair & Fitted & Low & High \\
+\midrule
+UK REF--pay & $0.070$ \ci{0.039}{0.115} & $0.130$ \ci{0.087}{0.185} & $0.085$ \ci{0.050}{0.133} \\
+UK REF--intake & $0.035$ \ci{0.014}{0.071} & $0.075$ \ci{0.043}{0.121} & $0.050$ \ci{0.024}{0.090} \\
+UK pay--intake & $0.065$ \ci{0.035}{0.109} & $0.155$ \ci{0.108}{0.213} & $0.005$ \ci{0.000}{0.028} \\
+US $F$--pay & $0.070$ \ci{0.039}{0.115} & $0.245$ \ci{0.187}{0.311} & $0.050$ \ci{0.024}{0.090} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{How much the size matters here.} Under the homogeneous null of the calibrated test the observed within
+correlations lie
+0.15 to 0.29 (in correlation units) below the null's 5\% point, 4 to 18 null SDs, for the three UK pairs and for US
+$F$--pay on the main and on the largest sample. Translated into a shift of the null (null SD times $z(\text{size})-
+z(0.05)$, a normal approximation), the worst setting of T1 moves it by only 0.007 to 0.022. The rejection therefore
+does not rest on the calibration of the test. It rests on the latent structure, which T2 varies.
+
+\paragraph{T2 (a): heterogeneous loadings (post hoc).} The null of the calibrated test gives each university one
+effect common to all its fields. T2 (a) lets the university component load differently by field, with loadings that
+make the across-university coupling vary over fields as much as observed: a between-field SD of 0.237 for US
+$F$--pay, against a sampling floor of 0.143, and 0.163 for UK REF--pay, against 0.082. The pre-specified loading
+family could not reproduce that spread, so we widened it to three families (L: $\exp(s\eta-s^2)$ on every variable;
+N: $1+s\eta$ on every variable; P: $1+s\eta$ on pay only, with $\eta$ a standard normal draw per field and variable)
+and selected the verdict nulls (Section~\ref{sec:si-prereg} gives the basis of this post hoc choice). On the
+verdict nulls (UK family P and US family N, both at $s=0.6$) the test
+still rejects, with $P=0.0033$ for UK REF--pay and $P=0.0100$ for US $F$--pay, but the observed within value lies only
+1.3 and 0.6 null SDs below the null's 5\% point. No grid point matches the spread, the across correlations and the
+within-university variance shares together; the verdict nulls carry more within-university variance than the data
+show, which works against the rejection. Nulls that match the variance shares sit at the sampling floor of the spread
+and are in effect the homogeneous null. Table~\ref{tab:si-grid} lists every grid point that matches the observed
+spread, each with its own 600-draw null. The US rejection holds on families L and P at every matching point, but on
+family N it fails once the spread is pushed beyond the observed one: $P$ is 0.045 at 1.21 times the observed SD and
+0.083 at 1.29 times. The UK REF--pay rejection fails on family N at about twice the observed spread and on family P at
+about three times. The intake pairs are not interpreted under (a), because the grid matches the spread of REF--pay
+only.
+
+\begin{table}[!htbp]
+\centering
+\caption{T2 (a): grid points whose between-field SD of coupling matches the observed spread (UK REF--pay 0.163, US
+$F$--pay 0.237), academic--pay pairs only; post hoc. Coupling SD: simulated between-field SD (ratio to
+the observed in parentheses). Across / shares: largest absolute misfit of the across correlations and of the
+within-university variance shares. Null: 2.5th to 97.5th percentile of the within correlation over 600 null draws
+(not a CI). Observed within: UK REF--pay $+0.103$, US $F$--pay $+0.047$. $^v$Verdict null. The last four rows
+are a denser US grid on family N.}\label{tab:si-grid}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lllccccc@{}}
+\toprule
+Country & Family & $s$ & Coupling SD & Across & Shares & Null [2.5\%, 97.5\%] & $P$ \\
+\midrule
+UK & L & 1.0 & 0.199 (1.22) & 0.091 & 0.197 & \ci{+0.136}{+0.356} & 0.0116 \\
+UK & L & 1.2 & 0.223 (1.37) & 0.182 & 0.324 & \ci{+0.129}{+0.373} & 0.0116 \\
+UK & L & 1.5 & 0.209 (1.28) & 0.288 & 0.495 & \ci{+0.150}{+0.387} & 0.0033 \\
+UK & N & 0.5 & 0.202 (1.24) & 0.010 & 0.037 & \ci{+0.158}{+0.413} & 0.0033 \\
+UK & N & 0.6 & 0.318 (1.95) & 0.047 & 0.120 & \ci{+0.019}{+0.391} & 0.1364 \\
+UK & N & 0.7 & 0.468 (2.87) & 0.131 & 0.186 & \ci{-0.071}{+0.401} & 0.5607 \\
+UK & N & 0.8 & 0.525 (3.22) & 0.213 & 0.264 & \ci{-0.107}{+0.446} & 0.6988 \\
+UK & N & 1.0 & 0.591 (3.63) & 0.317 & 0.383 & \ci{-0.186}{+0.415} & 0.7121 \\
+UK & N & 1.2 & 0.624 (3.83) & 0.436 & 0.467 & \ci{-0.234}{+0.416} & 0.6722 \\
+UK & N & 1.5 & 0.639 (3.92) & 0.518 & 0.545 & \ci{-0.265}{+0.338} & 0.7055 \\
+UK & P & 0.6$^v$ & 0.201 (1.23) & 0.002 & 0.030 & \ci{+0.167}{+0.381} & 0.0033 \\
+UK & P & 0.7 & 0.291 (1.79) & 0.024 & 0.115 & \ci{+0.102}{+0.328} & 0.0283 \\
+UK & P & 0.8 & 0.362 (2.22) & 0.032 & 0.166 & \ci{+0.095}{+0.329} & 0.0416 \\
+UK & P & 1.0 & 0.468 (2.87) & 0.128 & 0.290 & \ci{+0.090}{+0.310} & 0.0599 \\
+UK & P & 1.2 & 0.527 (3.23) & 0.169 & 0.343 & \ci{+0.081}{+0.274} & 0.0915 \\
+UK & P & 1.5 & 0.585 (3.59) & 0.243 & 0.423 & \ci{+0.064}{+0.247} & 0.2396 \\
+\midrule
+US & L & 1.0 & 0.258 (1.09) & 0.011 & 0.260 & \ci{+0.075}{+0.177} & 0.0017 \\
+US & L & 1.2 & 0.250 (1.05) & 0.118 & 0.393 & \ci{+0.054}{+0.153} & 0.0116 \\
+US & N & 0.6$^v$ & 0.255 (1.08) & 0.006 & 0.057 & \ci{+0.058}{+0.207} & 0.0100 \\
+US & N & 0.7 & 0.327 (1.38) & 0.000 & 0.115 & \ci{+0.016}{+0.204} & 0.1231 \\
+US & N & 0.8 & 0.409 (1.73) & 0.004 & 0.190 & \ci{-0.015}{+0.226} & 0.2679 \\
+US & N & 1.0 & 0.539 (2.27) & 0.054 & 0.294 & \ci{-0.084}{+0.246} & 0.4908 \\
+US & N & 1.2 & 0.597 (2.52) & 0.158 & 0.389 & \ci{-0.132}{+0.252} & 0.5624 \\
+US & N & 1.5 & 0.649 (2.74) & 0.206 & 0.450 & \ci{-0.167}{+0.268} & 0.6040 \\
+US & P & 0.8 & 0.253 (1.07) & 0.009 & 0.100 & \ci{+0.161}{+0.249} & 0.0017 \\
+US & P & 1.0 & 0.333 (1.41) & 0.016 & 0.171 & \ci{+0.125}{+0.210} & 0.0017 \\
+US & P & 1.2 & 0.432 (1.82) & 0.016 & 0.235 & \ci{+0.101}{+0.184} & 0.0017 \\
+US & P & 1.5 & 0.549 (2.32) & 0.012 & 0.278 & \ci{+0.076}{+0.152} & 0.0017 \\
+\midrule
+US & N & 0.62 & 0.273 (1.15) & 0.013 & 0.070 & \ci{+0.046}{+0.198} & 0.0283 \\
+US & N & 0.64 & 0.286 (1.21) & 0.002 & 0.096 & \ci{+0.039}{+0.196} & 0.0449 \\
+US & N & 0.66 & 0.305 (1.29) & 0.008 & 0.098 & \ci{+0.026}{+0.202} & 0.0832 \\
+US & N & 0.68 & 0.317 (1.34) & 0.004 & 0.135 & \ci{+0.022}{+0.207} & 0.0982 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{T2 (b): correlated pay--intake error.} UK pay and intake come from the same LEO rows. Adding correlated
+error to them at $\rho_e=+0.2$ and $+0.5$ (realised correlations of the cohort errors $+0.17$ and $+0.34$) moves the
+pay--intake null (mean null within correlation $+0.427$ under the null of the calibrated test, $+0.480$ and $+0.551$
+here) but not the
+REF--pay null, whose central range is \ci{+0.373}{+0.497} and \ci{+0.361}{+0.489} against \ci{+0.376}{+0.498}. REF
+carries no part of the shared error, so (b) is uninformative for REF--pay. Every pair keeps $P=0.0017$.
+
+\paragraph{T3: the largest US sample.} The FE-only sample of the base regression does not need selectivity data
+(4,645 programmes, 251 universities, 55 fields). On it the across correlation is $+0.468$ \ci{+0.416}{+0.520} and the
+within correlation $+0.055$ \ci{+0.023}{+0.087}, against a null range of \ci{+0.294}{+0.349} (calibrated null
+$\rho=0.573$; $P=0.0017$). On the main design the audit reproduces the null range of the calibrated test,
+\ci{+0.282}{+0.340}, with $P=0.0017$. By the pre-specified rule (within below the null range and $P<0.05$) the
+reading holds on both samples.
+
+\paragraph{T4: REF 2014.} With REF 2014 in place of REF 2021, on REF 2014's own sample (838 programmes, 110
+providers, 15 subjects), REF and pay agree at $+0.607$ across providers and $+0.134$ within them, against a null range
+of \ci{+0.375}{+0.492}; REF and intake at $+0.692$ and $+0.171$, against \ci{+0.296}{+0.432} ($P=0.0017$ for both).
+On the 781 programmes scored in both exercises, REF 2014 gives $+0.607$ and $+0.135$ for REF--pay, and REF 2021, an
+exploratory comparison, $+0.613$ and $+0.109$. The paired differences, REF 2014 minus REF 2021 (provider cluster
+bootstrap, same draws), are $-0.006$ \ci{-0.050}{+0.038} across and $+0.026$ \ci{-0.043}{+0.096} within for
+REF--pay. REF 2014 re-measures academic standing on largely the same programmes, with the same pay and intake, so T4
+is a re-measurement, not an independent replication.
+
+\paragraph{Not run.} The size of the test when heterogeneous loadings and misspecified noise act together was not
+audited: T1 audits misspecified noise under one university effect per university, and T2 (a) runs heterogeneous nulls
+with the published noise. Every audit here is model-based and does not cover misspecifications outside those named,
+such as non-normal latent scores or errors in $F$ that are not classical.
+
+% =====================================================================================================================
+\section{Variants of the department gradient}\label{sec:si-slope}
+
+Table~\ref{tab:si-gradient} gives the summary of the department gradient that Fig.~3 of the main text draws, and
+Table~\ref{tab:si-slopes} collects every variant.
+
+\begin{table}[!htbp]
+\centering
+\caption{The department's pay gradient within universities: the values drawn in Fig.~3 of the main text. Slope of
+log median pay per within-field SD of the department's academic measure, with university and field fixed effects
+except in the first row. Brackets: 95\% cluster-bootstrap CIs (universities; paired across rows of one sample); first
+row: cluster-robust SE; REF 2014 row: cluster-robust CI. US: Scorecard pay four years after completion, hiring rank
+$F$. UK: LEO pay five years after graduation, REF rating (not a hiring rank). Variants in
+Table~\ref{tab:si-slopes}.}\label{tab:si-gradient}
+\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{10.2cm}>{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+Specification & Slope [95\% CI] \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{US, 4,645 programmes, 251 universities, 55 fields}}\\
+Field fixed effects only & $+0.077$ (SE 0.005) \\
+University and field fixed effects & $+0.0104$ \ci{+0.0036}{+0.0169} \\
+\multicolumn{2}{@{}l}{\emph{US, 3,961 programmes, 214 universities, 53 fields}}\\
+Main: plus field-specific slopes on SAT, admission rate, Pell share and $G$ & $+0.0056$ \ci{-0.0017}{+0.0132} \\
+Main, plus doctoral production & $+0.0048$ \ci{-0.0027}{+0.0132} \\
+Main, corrected for the reliability of residual $F$ (0.65 or 0.72) & $+0.0085$ or $+0.0078$ \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{UK, 900 programmes, 116 universities, 15 subjects}}\\
+University and subject fixed effects, REF 2021 & $+0.0178$ \ci{+0.0063}{+0.0305} \\
+\multicolumn{2}{@{}l}{\emph{UK, 893 programmes, 114 universities}}\\
+Plus subject-specific slopes on $G$ and selectivity & $+0.0123$ \ci{+0.0017}{+0.0240} \\
+\multicolumn{2}{@{}l}{\emph{UK, 871 programmes, 112 universities}}\\
+University and subject fixed effects, REF 2014 & $+0.0315$ \ci{+0.0185}{+0.0446} \\
+\multicolumn{2}{@{}l}{\emph{UK, 873 programmes, 114 universities}}\\
+Share that moves with the programme's own intake & 60\% \ci{17\%}{125\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:si-slopes} collects the variants of the within-university slope. The production audit of the hiring
+rank (test T0 of the model of Section~\ref{sec:si-model}) motivates the US variants. With $F$ replaced by a
+degree-corrected Bradley--Terry rank, which allows for
+each department's volume of doctoral production and hiring, mean coupling keeps 1.05 \ci{0.985}{1.108} of its size,
+that is, all of it. With $F$ residualised on log doctoral production and the export ratio, it keeps 0.64
+\ci{0.51}{0.77} (two-way field and institution intervals, 58 fields). With the complete 2026 edges, however, $F$
+correlates $+0.92$ with the export ratio, so this residualisation removes much of $F$ itself and says little about
+production. On the 2026 data the pre-specified rule still returns ``partly production'', because the interval of the
+residualised branch falls below its threshold; since that branch now removes much of $F$ itself, we do not read this
+verdict as evidence that $F$ reflects doctoral production.
+
+\begin{table}[!htbp]
+\centering
+\caption{Within-university slope of log pay per within-field SD of the academic measure. Interval types: B =
+cluster bootstrap by university (US: B = 999, the draws of the original slope specification, so changes are
+paired); CR1 = cluster-robust by provider.}\label{tab:si-slopes}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{8.4cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{3.0cm}@{}}
+\toprule
+Specification & Slope [95\% CI] (type) & Sample \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{US, Scorecard 4-year pay, hiring rank $F$}} \\
+Field fixed effects only & $+0.077$ (CR1 SE 0.005) & 4,645 programmes, 251 univ., 55 fields \\
+University and field fixed effects & $+0.0104$ \ci{+0.0036}{+0.0169} (B) & same \\
+Main: plus field-specific slopes on SAT, admission rate, Pell share and $G$ & $+0.0056$ \ci{-0.0017}{+0.0132} (B) & 3,961 programmes, 214 univ., 53 fields \\
+Main, plus field-specific slopes on the production rank (production adjustment used in the text) & $+0.0048$ \ci{-0.0027}{+0.0132} (B); change $-0.0008$ \ci{-0.0038}{+0.0023} & same \\
+Main, plus field-specific slopes on production and export-ratio ranks (pre-specified primary adjustment; uninformative, see text) & $+0.0103$ \ci{-0.0053}{+0.0259} (B) & same \\
+Main with $F$ residualised on production and export ratio over the whole field (pre-specified variant) & $+0.0032$ \ci{-0.0019}{+0.0083} (B) & same \\
+Main, degree-corrected rank in place of $F$ & $+0.0055$ \ci{-0.0015}{+0.0121} (B) & same \\
+Main, divided by the reliability of residual $F$ (version (a)): public-edge 0.654 / extrapolated 0.719 & $+0.0085$ / $+0.0078$ & same \\
+Computer science remainder (per-field main specification, average of 4-, 1- and 5-year medians) & $+0.040$ \ci{+0.008}{+0.075} (B) & 164 programmes \\
+Computer science remainder, production rank in the design & $+0.026$ \ci{-0.008}{+0.062} (B) & same \\
+Computer science remainder, production and export-ratio ranks in the design (uninformative) & $-0.012$ \ci{-0.076}{+0.055} (B) & same \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{UK, LEO 5-year pay, REF rating}} \\
+Provider and subject fixed effects, REF 2021 rank & $+0.0178$ \ci{+0.0063}{+0.0305} (B); \ci{+0.0057}{+0.0298} (CR1) & 900 programmes, 116 providers, 15 subjects \\
+Plus subject-specific slopes on $G$ and university selectivity & $+0.0123$ \ci{+0.0017}{+0.0240} (B); \ci{+0.0013}{+0.0232} (CR1) & 893 programmes, 114 providers \\
+Raw REF grade-point average instead of rank & $+0.0197$ \ci{+0.0075}{+0.0318} (CR1) & same \\
+Share of 4* research instead of grade-point average & $+0.0162$ \ci{+0.0051}{+0.0274} (CR1) & same \\
+Extended subject crosswalk & $+0.0114$ \ci{+0.0036}{+0.0192} (CR1) & 28 subjects \\
+REF 2014 rank (exploratory) & $+0.0315$ \ci{+0.0185}{+0.0446} (CR1) & 871 programmes, 112 providers \\
+Without / with subject-specific slopes on the programme's intake & $+0.0187$ / $+0.0075$ \ci{-0.0032}{+0.0183} (CR1) & 873 programmes, 114 providers \\
+Share of the slope that moves with intake (suppressed cells $=0$ / $=1$ / $=2$) & 60\% \ci{17\%}{125\%} / 58\% / 54\% (B, paired) & 873 programmes, 114 providers \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Reading.} The main slope's interval includes zero. Adding the department's doctoral production rank inside
+the design leaves it almost unchanged. The pre-specified adjustment also adds the export-ratio rank, which inside the
+design correlates $+0.83$ with $F$; that row, like the pre-specified variant that residualises $F$ over the whole
+field, partials much of $F$ out of itself and is reported only because it was pre-specified. Corrected for the
+reliability of residual $F$, the main slope is about 0.8\% per SD under either reliability variant. The same
+correction gave about 1\% to 3\% on the earlier export and about 1.5\% on the 2026 data with the earlier name join;
+the samples differ (Section~\ref{sec:si-data}). One within-field SD of $F$ corresponds to a median of 36 places in
+the field's hiring rank (interquartile range over the 53 fields of the main design, 21 to 50; a check described in
+Section~\ref{sec:si-data}). The computer science remainder is reported for completeness, not as an exception. Its
+interval includes
+zero once production is adjusted inside the design. Its sample lacks 11 of the 50 highest-ranked computer science
+departments: 8 for want of a 2026 SAT average, among them six University of California campuses, and 3 for
+unreleased medians; none is lost to the name join. In the UK, the REF 2021 slope is of the same order as the US slope
+with university and field fixed effects. REF 2014, which assessed research in 2008--2013, while these cohorts studied,
+gives a larger slope; on the 814 programmes scored in both exercises it exceeds the REF 2021 slope by $+0.0127$
+\ci{+0.0018}{+0.0238} (paired cluster bootstrap). The share of the UK slope that moves with the programme's own intake
+is imprecise, and it is not a decomposition of the slope; it does not rule out sorting on attainment that intake does
+not record.
+
+\paragraph{Prior attainment in the UK.} Among graduates of the same prior-attainment band,
+66\% \ci{51\%}{79\%} of the rank coupling of $G$ with five-year pay survives (28 subjects; bootstrap over subjects,
+then providers), and 76\% \ci{66\%}{85\%} of the pay gradient (two-way subject and provider interval). After
+standardising pay for the attainment mix with within-provider band gradients, 73\% \ci{67\%}{78\%} of the pay
+gradient survives, against 85\% \ci{79\%}{92\%} of the rank coupling (32 subjects). University-level selectivity,
+the US control, also absorbs peer and resource effects, so the two kinds of control remove different things.
+
+\paragraph{A bound under proportional selection.} We treated the programme's intake as the observed
+control in the bound of \citet{oster2019unobservable}. The UK slope then survives proportional selection on
+unobservables only when $R^2$ is measured within (fixed effects partialled out) and $R_{\max}$ is 1.3 times the
+controlled $R^2$. With total $R^2$, or with $R_{\max}$ capped by measurement error, the bias-adjusted slope at $\delta=1$
+is negative. This is a
+bound under named assumptions, not an estimate.
+
+\subsection{Positive control and prediction}\label{sec:si-pcp}
+
+We ask two further questions. P1: does a department's rank, net of its university, carry academic information? P2:
+does it help predict its graduates' pay out of sample? Both tests and their rules were specified after the results
+above had been seen and before any of their outcomes was computed; the rows marked post hoc below were added after
+the results had been seen, carry no rule and leave the pre-specified verdicts unchanged. The analysis first
+reproduces the across and within correlations of Section~\ref{sec:si-contrast} on the main design.
+
+\paragraph{NRC data and terms.} The academic outcomes come from the Excel data table of the National Research
+Council's assessment of research-doctorate programmes (revised 29 April 2011; data for 2005--06; 5,004 programmes in
+62 fields) \citep{nrc2011data}. Its terms allow personal, noncommercial use only and forbid posting or distributing
+the table without permission. The raw file is therefore not redistributed, and no programme-level NRC value appears in
+any output of the repository; the analysis writes only the institution map (labels and IPEDS identifiers). Its
+provenance is recorded in \texttt{data/sources.csv} of the repository (section 10n).
+
+\paragraph{Maps.} NRC institution labels are matched to IPEDS units by exact normalised name in the 2006 directory
+(172 of 221 labels) or by a hand-checked alias (31); 14 labels of joint programmes are excluded and 4 stay unmatched.
+Programmes run on a separately listed campus (a medical centre or branch with its own IPEDS unit) are excluded. NRC
+fields are mapped to the fields of the hiring data by one rule. A same-name field names the same discipline and no
+part of another field of the 2026 taxonomy (27 NRC fields); a wider or merged field covers the discipline together with
+others (13 NRC fields, exploratory only). A (university, field) cell is kept only if exactly one NRC programme of the
+mapped field matches it. With the sample rules of the slope analysis re-applied, the primary cells are 1,484
+programmes at 173
+universities in 24 same-name fields, drawn from the fixed-effects-only sample, so that the University of California
+campuses, which lack a SAT average, stay in. These are NRC-covered doctoral departments, 58\% of the fixed-effects-only
+programmes in their fields, and they sit in the upper part of the rank distribution: their median within-field
+percentile of $F$ is 0.67, and 72\% lie above their field's median.
+
+\paragraph{P1: positive control.} The primary measure is publications per allocated faculty member, named before the
+R-ranking because the NRC's R and S rankings also weight doctoral production and academic placement, which would make
+the test partly circular. The statistic is the within-university correlation of Section~\ref{sec:si-contrast}, on
+normal scores computed on each measure's own cells, with 2,000 university-cluster bootstrap draws. The rule: the
+control passes if the within correlation of $F$ with publications per faculty member and its paired difference from
+the within correlation of $F$ with pay on the same cells both have intervals above zero. It passes
+(Table~\ref{tab:si-pcp}): the within correlation is $+0.187$ against $+0.037$ for pay, while across universities the
+two are $+0.506$ and $+0.513$. Every other NRC measure is positively related to $F$ within universities, and the
+paired difference from pay excludes zero for all but the share of faculty with grants. The NRC research measures are,
+in turn, not positively related to pay within universities (exploratory): publications $-0.009$ \ci{-0.067}{+0.051},
+share with grants $+0.001$ \ci{-0.047}{+0.048}, citations per publication $-0.076$ \ci{-0.141}{-0.005}. P1 shows that
+the within-university residual of $F$ is not noise for these departments; it does not rule out that noise in the pay
+medians hides a relation with pay.
+
+\begin{table}[!htbp]
+\centering
+\caption{P1: within-university correlations of the department rank $F$ with NRC research measures and with pay on
+the same cells (normal scores, university and field fixed effects), and their paired difference. 95\%
+university-cluster bootstrap intervals (2,000 draws). Pre: the rule's measure; named: secondary measures named in the
+specification; expl.: exploratory; post hoc: added after the results had been seen. R and S rankings: midpoints of
+the 5th--95th percentile
+ranges, sign reversed; they also weight doctoral production and placement.}\label{tab:si-pcp}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+Measure or variant (status) & With measure & With pay & Difference & Cells \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Primary cells (fixed-effects-only base, same-name fields)}} \\
+Publications per allocated faculty (pre) & $+0.187$ \ci{+0.135}{+0.241} & $+0.037$ \ci{-0.019}{+0.096} & $+0.150$ \ci{+0.069}{+0.231} & 1,484 prog., 173 univ., 24 fields \\
+Citations per publication (named) & $+0.156$ \ci{+0.093}{+0.219} & $+0.038$ \ci{-0.026}{+0.101} & $+0.118$ \ci{+0.025}{+0.219} & own cells \\
+Share of faculty with grants (named) & $+0.112$ \ci{+0.055}{+0.168} & $+0.038$ \ci{-0.019}{+0.097} & $+0.074$ \ci{-0.005}{+0.150} & own cells \\
+R-ranking midpoint (named) & $+0.401$ \ci{+0.351}{+0.446} & $+0.035$ \ci{-0.023}{+0.094} & $+0.365$ \ci{+0.284}{+0.442} & own cells \\
+S-ranking midpoint (named) & $+0.279$ \ci{+0.225}{+0.328} & $+0.035$ \ci{-0.022}{+0.094} & $+0.243$ \ci{+0.165}{+0.318} & own cells \\
+Research-activity ranking midpoint (expl.) & $+0.225$ \ci{+0.170}{+0.281} & $+0.035$ \ci{-0.023}{+0.095} & $+0.190$ \ci{+0.108}{+0.270} & own cells \\
+Awards per allocated faculty (expl.) & $+0.188$ \ci{+0.125}{+0.251} & $+0.037$ \ci{-0.020}{+0.099} & $+0.150$ \ci{+0.059}{+0.243} & own cells \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Publications per allocated faculty: sensitivity}} \\
+Main-design base (named sensitivity) & $+0.201$ \ci{+0.138}{+0.261} & $+0.040$ \ci{-0.026}{+0.100} & $+0.161$ \ci{+0.070}{+0.254} & 1,242 prog., 153 univ., 22 fields \\
+Same-name plus wider or merged fields (expl.) & $+0.199$ \ci{+0.156}{+0.247} & $+0.035$ \ci{-0.018}{+0.087} & $+0.165$ \ci{+0.095}{+0.235} & 1,923 prog., 176 univ., 34 fields \\
+Faculty-weighted mean over several programmes (expl.) & $+0.186$ \ci{+0.136}{+0.235} & $+0.032$ \ci{-0.026}{+0.089} & $+0.155$ \ci{+0.081}{+0.230} & 1,596 prog., 174 univ., 24 fields \\
+Controlling allocated faculty and doctorates graduated (post hoc) & $+0.142$ \ci{+0.089}{+0.192} & $+0.038$ \ci{-0.020}{+0.096} & $+0.104$ \ci{+0.028}{+0.178} & 1,484 prog., 173 univ., 24 fields \\
+Programmes with a merged or adjacent name dropped (post hoc) & $+0.187$ \ci{+0.127}{+0.242} & $+0.038$ \ci{-0.026}{+0.100} & $+0.149$ \ci{+0.060}{+0.235} & 1,355 prog., 168 univ., 22 fields \\
+As above, also field-specific names dropped (post hoc) & $+0.185$ \ci{+0.126}{+0.240} & $+0.033$ \ci{-0.030}{+0.093} & $+0.153$ \ci{+0.063}{+0.232} & 1,346 prog., 167 univ., 22 fields \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{P2: out-of-sample prediction.} Task 1 asks how well the pay of a new university's programmes can be
+predicted. Whole universities are held out (10 folds, repeated 5 times) on the main design, and nothing is estimated
+from a held-out university's pay. Model U has field effects and the university's $G$, mean SAT, admission rate, Pell
+share, control and state earnings level, with common slopes; model U+D adds $F$ with field-specific slopes. Task 2 asks
+a different question: given what a university's other departments pay, does a department's rank help predict its own
+pay? One programme is held out at a time at universities with at least three programmes, and the prediction uses the
+mean residual pay of the university's other programmes. The rule: the department ``adds little out of sample'' if the
+upper bound of the gain in $R^2$ is below 0.01 in both tasks. It is not met (Table~\ref{tab:si-pred}): $F$ adds about
+1.4 points of out-of-sample $R^2$ in task 1 and 1.6 in task 2. The post hoc rows locate that gain. In task 1,
+field-specific slopes on the university-wide rank $G$, with no $F$, add as much as $F$ does, and so does the mean rank
+of the university's other departments; the department's own position, its rank minus that mean, adds about zero for a
+new university, at most 0.02 points across the four ways of entering it. In task 2 that position adds about 0.09 to
+0.15 points. The 0.35 points that the primary $F$ terms add over field-specific slopes on the other programmes' mean
+pay are an upper bound for the department, because they still contain university terms. Folds grouped by OPEID6 (so
+that the Rutgers campuses that share pay fall in one fold), dropping the state earnings level, or ridge estimation
+leave the task-1 gain at 1.3 to 1.4 points. The decomposition is exploratory.
+
+\begin{table}[!htbp]
+\centering
+\caption{P2: out-of-sample $R^2$ of log four-year median pay and the gain from the department rank $F$. Intervals:
+university-cluster bootstrap (the reported interval, adopted after the results had been seen), and for the primary
+task-1 gain also the pre-specified fold bootstrap. Task 1: 3,961 programmes, 214 universities; task 2: 3,935
+programmes, 201 universities. Deviation: $z(F)$ minus the mean $z(F)$ of the university's other programmes. Post hoc:
+added after the results had been seen; expl.: exploratory choice recorded before the run.}\label{tab:si-pred}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{9.6cm}>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+Quantity (status) & Estimate [95\% interval] \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Task 1: a new university}} \\
+$R^2$, model U / model U+D (pre) & $0.8247$ / $0.8382$ \\
+Gain from $F$, field-specific slopes (pre) & $+0.0136$ \ci{+0.0082}{+0.0188}; fold bootstrap \ci{+0.0113}{+0.0158} \\
+Gain from field-specific slopes on $G$ alone, no $F$ (post hoc) & $+0.0142$ \ci{+0.0083}{+0.0199} \\
+Gain from the mean $z(F)$ of the university's other programmes (post hoc) & $+0.0165$ \ci{+0.0104}{+0.0224} \\
+Gain from the deviation, one slope (post hoc) & $+0.0002$ \ci{-0.0002}{+0.0006} \\
+Gain from the deviation, field-specific slopes (post hoc) & $-0.0032$ \ci{-0.0046}{-0.0018} \\
+Gain from the deviation on top of field-specific $G$ slopes (post hoc) & $+0.0000$ \ci{-0.0002}{+0.0003} \\
+$R^2$, model U with field-specific slopes on SAT, admission rate, Pell share and $G$ (expl.) & $0.8476$ \\
+\quad gain from $F$ added with one slope (post hoc) & $+0.0002$ \ci{-0.0003}{+0.0007} \\
+\quad gain from $F$, field-specific slopes, ridge (post hoc) & $+0.0003$ \ci{-0.0004}{+0.0010} \\
+Gain from $F$, folds grouped by OPEID6 (post hoc) & $+0.0135$ \ci{+0.0083}{+0.0190} \\
+Gain from $F$, state earnings level removed from both models (post hoc) & $+0.0133$ \ci{+0.0078}{+0.0187} \\
+Gain from $F$, ridge (post hoc) & $+0.0141$ \ci{+0.0095}{+0.0188} \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Task 2: a known university}} \\
+$R^2$ without / with $F$ (pre) & $0.8377$ / $0.8536$ \\
+Gain from $F$ (pre) & $+0.0159$ \ci{+0.0113}{+0.0207} \\
+Gain from field-specific slopes on $G$ alone (post hoc) & $+0.0144$ \ci{+0.0092}{+0.0198} \\
+Gain from the other programmes' mean $z(F)$ (post hoc) & $+0.0164$ \ci{+0.0109}{+0.0221} \\
+Gain from the deviation, one slope (post hoc) & $+0.0014$ \ci{+0.0005}{+0.0023} \\
+Gain from the deviation on top of field-specific $G$ slopes (post hoc) & $+0.0009$ \ci{+0.0002}{+0.0017} \\
+Gain from the primary $F$ terms over field-specific slopes on the other programmes' mean pay (post hoc; upper bound for the department) & $+0.0035$ \ci{+0.0012}{+0.0058} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================================================================
+\section{The field map, selectivity and pay scales}\label{sec:si-map}
+
+Table~\ref{tab:si-map} collects the statistics behind the main-text sections on the field map, on what the
+department's rank adds to its university's, and on national pay scales. In all of them agreement is measured field by
+field: the Spearman correlation, across the universities that teach a field (US) or subject (UK), of an academic
+ordering with median pay. We also call this statistic coupling. Means over fields weight fields equally.
+These field-level values are a different statistic from the pooled correlations of normal scores in
+Section~\ref{sec:si-contrast}, and the two are not interchangeable: the mean over fields of US agreement of $F$ with
+four-year pay is $+0.379$, against a pooled across-university correlation of $+0.448$.
+
+\begin{table}[!htbp]
+\centering
+\caption{Field-level agreement: the field map, its relation to selectivity, the department's rank against the
+university's, and national pay scales. Interval types: B = institution (US) bootstrap within field; J = joint
+institution bootstrap across fields; S = bootstrap resampling subjects, then providers; P = provider bootstrap; W =
+two-way (field, institution) cluster variance; T = split-half true-score correlation (no interval reported).
+Section~\ref{sec:si-code} names the scripts that produce each block.}\label{tab:si-map}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{8.2cm}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}p{2.8cm}@{}}
+\toprule
+Statistic & Value [95\% CI] (type) & Sample \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{US field map: $F$ with Scorecard four-year median pay}} \\
+Mean agreement over fields & $+0.379$ \ci{+0.320}{+0.438} (J) & 55 fields, $\ge15$ universities \\
+Lowest and highest field & $-0.28$ (physiology), $+0.70$ (computer engineering) & 19 and 102 universities \\
+Lowest and highest among fields with $\ge80$ universities; computer science, nursing & $+0.04$ (music), $+0.70$ (computer engineering); $+0.68$, $+0.17$ & 24 fields \\
+Fields more than 1.96 bootstrap SE above / below zero & 41 / 0 (B) & 55 fields \\
+Scorecard against PSEO five-year pay: Spearman across fields of the two agreements & $+0.82$ \ci{+0.73}{+0.92} (W) & 58 fields, $\ge8$ universities \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Field map and selectivity}} \\
+US: agreement against the correlation of pay with mean SAT, across fields & true-score $r=+0.87$ (T) & 25 fields with $\ge60$ programmes with SAT \\
+US: mean agreement, raw / net of SAT, admission rate, Pell share, control and state earnings level & $+0.38$ / $+0.10$ & 51 fields (SAT sample) \\
+US: the same net agreement with 2026 / entry-year controls & $+0.098$ \ci{+0.033}{+0.163} / $+0.089$ \ci{+0.023}{+0.155}; difference $-0.009$ \ci{-0.044}{+0.026} (W) & 51 fields, 3,860 programmes \\
+UK: heterogeneity of agreement of $G$ with five-year pay beyond provider sampling noise & SD of true agreement 0.16, $I^2=0.84$ & 32 subjects \\
+UK: agreement of $G$ with pay against the correlation of university selectivity with pay, across subjects & Spearman $+0.92$ \ci{+0.71}{+0.95} (S) & 32 subjects \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Measures}} \\
+UK $G$ against university REF grade-point average, across universities & Spearman $+0.815$ \ci{+0.721}{+0.876} (P) & 131 universities \\
+US $F$ against $G$ within PSEO field $\times$ cohort cells, mean Spearman & 0.85 (range 0.66 to 0.97) & 39 fields, 141 cells; earlier PSEO release \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{The department's rank against the university's, US, across universities}} \\
+Mean of agreement of $F$ minus agreement of $G$ with four-year pay, uncorrected & $-0.054$ \ci{-0.083}{-0.023} (B) & 58 fields \\
+Same, $F$ corrected with its public-edge reliability & $-0.037$ \ci{-0.067}{-0.004} (B) & 58 fields \\
+Same, $F$ corrected with its extrapolated reliability & $-0.041$ \ci{-0.070}{-0.007} (B) & 58 fields \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{UK subjects paid on national scales (nursing and midwifery, medicine and dentistry, education and teaching)}} \\
+Mean agreement of $G$ with five-year pay: national-scale subjects / others & $+0.120$ \ci{-0.033}{+0.258} / $+0.523$ \ci{+0.439}{+0.585} (S); difference $-0.404$ \ci{-0.566}{-0.238}, subject-label permutation $p=0.0009$ & 3 / 30 subjects \\
+Same, pay standardised for prior attainment with within-provider band gradients & $+0.053$ / $+0.463$; permutation $p=0.0014$ & 32 subjects \\
+Allied health (partly paid on national bands), agreement of $G$ with five-year pay & $+0.570$ & 1 subject \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Reading.} The field map tracks how strongly each field's pay follows university selectivity, in both
+countries, so on its own it cannot separate a department gradient from a university gradient that is steeper in some
+fields than in others. Across universities, the department's rank predicts pay slightly less well than its
+university's, and correcting $F$ for its measured reliability shrinks this gap without closing it; the extrapolated
+reliability gives the same answer. Because the errors of $F$ and $G$ may be correlated (Section~\ref{sec:si-contrast}),
+these corrections are approximate. That $F$ predicts pay no better than $G$ across universities does not mean that it
+adds nothing to $G$. Within universities, where the university fixed effects hold $G$ fixed, $F$ still goes with pay:
+the within correlation with fixed effects only and the slope with university and field fixed effects are positive.
+Once field-specific slopes on selectivity and $G$ are added, both shrink to intervals that include zero
+(Sections~\ref{sec:si-contrast} and~\ref{sec:si-slope}). In the pay-scale comparison the classification is by
+subject and therefore coarse, as allied health shows; it marks a descriptive boundary, not an identified mechanism.
+
+% =====================================================================================================================
+\section{Career time}\label{sec:si-career}
+
+These results are secondary to the two-level contrast. Each rests on assumptions stated with it.
+
+\paragraph{US within cohorts (PSEO V4.14.1).} On the balanced fixed-cohort panel (40 fields, 127
+institutions), coupling of $F$ with median pay rises by $+0.032$ per year \ci{+0.022}{+0.042} (two-way field and
+institution variance). A change within a cohort mixes career time with calendar time. If calendar and cohort effects
+are both non-negative, the career-time part lies in $[+0.014, +0.033]$ per year. This range is an identified set under
+those sign restrictions, not a confidence interval. Its lower end, a contrast at matched calendar years, is $+0.014$
+with a two-way interval of \ci{+0.005}{+0.023}. A 17-cell surface of graduation windows and horizons keeps the same
+institutions in every cell (27 fields). On it, the slope within a window is $\theta_h=+0.0321$
+\ci{+0.0200}{+0.0442} per year and the slope across windows at a fixed horizon is $\theta_c=+0.0173$
+\ci{+0.0099}{+0.0248}. With true age, period and cohort slopes $a$, $b$ and $g$, $\theta_h=a+b$ and $\theta_c=b+g$, so
+the across-window slope measures period and cohort trends, not career time. If $b\ge0$ and $g\ge0$, the career-time
+slope $a$ lies in $[\theta_h-\theta_c,\theta_h]=[+0.015,+0.032]$ per year, again an identified set.
+
+\paragraph{Timing of the ranks.} The hiring ranks describe the faculty employed in 2011--2020. These cohorts'
+one-year earnings fall in 2002--2013 and their ten-year earnings in 2011--2022, so later horizons lie closer to the
+years the ranks describe. If departments' and universities' standing drifted over time, agreement would rise with
+years since graduation for this reason alone. The data cannot rule out this competing explanation.
+
+\paragraph{Loadings.} In standardised rank regressions of pay on $F$ and $G$ within field and cohort, the loading on
+$G$ grows by $+0.034$ per year \ci{+0.020}{+0.048} and the loading on $F$ by $+0.003$ \ci{-0.010}{+0.016}. Their
+difference is $+0.031$ \ci{+0.007}{+0.056} when the loadings are estimated cell by cell (two-way); the conservative
+crossed bootstrap gives $[-0.004, +0.065]$, and a pooled form gives $+0.022$ \ci{-0.002}{+0.047}. The
+difference itself therefore depends on the method: it holds cell by cell, not in the crossed or pooled versions. The
+interval for the loading on $F$ allows a rise of up to about 0.14 over the nine years from one to ten years after
+graduation, as large as the loading itself one year after graduation (0.13), so ``no sign that the department's
+loading rises'' does not rule out a meaningful rise. Because $F$ and $G$ come from overlapping hiring data, their
+errors may be correlated (Section~\ref{sec:si-contrast}), which can shift weight between the two loadings. Net of SAT,
+admission rate, Pell share, control and the state earnings level, the partial correlation of $G$ with pay rises by
+$+0.014$ per year \ci{+0.004}{+0.023} (37 fields). The regression loading on $G$ with the same
+controls changes by $+0.012$ \ci{-0.011}{+0.035} per year. None of nine pre-specified tests of a decline in the
+university loading has an interval below zero.
+
+\paragraph{Graduate study and coverage.} On the panel rows with complete coverage data (40 fields, 141
+cells), the raw slope is $+0.0315$ \ci{+0.0214}{+0.0416} per year. With a coverage control it is $+0.0236$
+\ci{+0.0147}{+0.0326}; with the university's doctorate-origin rate $+0.0116$ \ci{+0.0036}{+0.0195}; with both
+$+0.0086$ \ci{+0.0012}{+0.0160}. The doctorate-origin-rate control absorbs a share 0.63 \ci{0.44}{0.83} of the slope.
+This is not the share due to graduate study: the doctorate-origin rate correlates $+0.71$ with $G$ within cells, so
+the control removes graduate-study timing and university standing together, and the data cannot say how much is
+which.
+
+\paragraph{Location (test T7 of the model).} Net of the wage level of the census divisions where a programme's
+graduates work, five-year coupling keeps a ratio of 1.05 \ci{0.91}{1.19} of its raw size (1.10 \ci{0.89}{1.31} with the
+out-of-state share as well). About one sixth (17\%) of the career rise moves with destination-division wages, and
+about one quarter (26\%) with those wages and the out-of-state share together. Location within divisions is not
+netted.
+
+\paragraph{UK.} On fixed LEO cohorts 2013/14 to 2016/17 (33 subjects), coupling of $G$ with pay rises by
+$+0.026$ \ci{+0.014}{+0.037} per year, from $+0.379$ one year after graduation to $+0.484$ five years after (bootstrap
+over subjects, then providers). Standardised with within-provider prior-attainment gradients the rise is $+0.028$
+\ci{+0.016}{+0.038} (32 subjects); within prior-attainment bands $+0.017$ \ci{+0.002}{+0.031} (27 subjects). The
+contrast at matched tax years is $+0.031$ \ci{+0.021}{+0.042} and the drift across cohorts at one year $-0.006$
+\ci{-0.015}{+0.003} (32 subjects each).
+
+% =====================================================================================================================
+\section{A model of two markets and one name}\label{sec:si-model}
+
+This section states the model that organises the results (written after most results had been seen; its tests
+T0--T8 were specified before their analyses but after most other results). It predicts no magnitudes: its
+parameters are free, and several are inferred from the results it organises.
+
+\subsection{Setup}
+
+The unit is the programme $(i,f)$, over the institutions $\mathcal I_f$ with a bachelor's programme and a ranked
+doctoral department in field $f$. Comparisons are across institutions within a field, so the model says nothing
+about the choice of field. In deviations from field means,
+\begin{equation}\label{eq:latent}
+s_{if}=\alpha_fa_i+r_{if},\qquad \theta_{if}=\beta_fx_i+y_{if},\qquad x_i=\xi_i+v_i,
+\end{equation}
+where $s$ is the academic market's valuation of the department and $\theta$ the mean productivity of the
+programme's graduates, selection included. University-wide are $a_i$ ($\mathrm{Var}\,a=1$), intake ability
+$\xi_i$ on the dimension the admission criterion measures, and $v_i\perp\xi_i$, the part of graduate quality that
+measured intake does not predict (unmeasured ability, value added, peer and resource effects). $r_{if}$ and
+$y_{if}$ are field-specific, with $\kappa_f=\mathrm{Corr}_f(r,y)$, and $\beta_f$ is the market price of $x$. Moments are taken
+within field over $i\in\mathcal I_f$; $X^{\perp Z}$ is the residual of $X$ on $Z$ and $\sigma_X^2=\mathrm{Var}\,X$.
+
+\subsection{Assumptions}
+
+\begin{description}
+\item[A0 (Gaussian copula).] The model holds for the normal scores of the latent components and the indicators,
+which are jointly Gaussian. For two such variables with Pearson correlation $r$, Spearman's
+$\rho=\tfrac{6}{\pi}\arcsin(r/2)$ \citep{kruskal1958ordinal}, which is strictly increasing, so statements about the
+signs and orderings of pairwise correlations hold for $\rho$. Residual and partial correlations do not carry over in
+this way (Lemma~\ref{lem:ranks}).
+\item[E (classical errors).] $F=s^*+e_F$, $G=a+e_G$, $Y(t)=m(t)+e_Y$ and $S=\xi+e_S$, with errors of mean zero,
+independent of one another and of every latent variable; $\mathrm{rel}_X$ is the latent share of $\mathrm{Var}\,X$.
+\item[A-orth (no covariance across levels).] $r_{if}$ and $y_{if}$ are uncorrelated with every university-wide
+variable, up to terms of the order of a programme's share of its university. Defining $r$ and $y$ as within-field
+residuals delivers $\mathrm{Cov}(a,r)=\mathrm{Cov}(x,y)=0$ and nothing more; the rest is assumed. It fails if
+departments are relatively strong at selective universities or if high-status universities draw relatively able
+students into the major.
+\item[H0--H2 (academic market).] $A_{uv}$ counts field-$f$ faculty at $v$ with a doctorate from $u$ ($u\neq v$).
+Gravity: $\mathbb EA_{uv}=p_uh_v\,\varphi(s_u-s_v)\,\zeta_{uv}$, with origin and destination parameters $p_u,h_v>0$,
+$\varphi$ positive, strictly increasing and differentiable, and $\zeta_{uv}=\zeta_{vu}\ge0$. Let
+$\pi_u=\log(p_u/h_u)$. H0 (volume neutrality): $\pi_u$ is the same for all departments. H1 (vertical sorting): for
+every pair with $\zeta_{uv}>0$, $s_u>s_v$ implies $\mathbb EA_{uv}>\mathbb EA_{vu}$. H2 (many hires):
+$\mathbb EA_{uv}=n\alpha_{uv}$ with $\alpha$ fixed and $A_{uv}/n\to_p\alpha_{uv}$.
+\item[M1--M4 (graduate market).] Graduate $k$ of programme $p=(i,f)$ has productivity
+$\eta_k=\theta_p+\varepsilon_k$, $\varepsilon_k\sim N(0,\sigma^2)$, plus growth $\beta_fg_i(t)$. M1: employers
+compete, learning is symmetric, and pay is the posterior mean of productivity given employers' information
+\citep{farber1996learning}. That information is the credential, the graduate's own signals (precision $h_b$ at
+hiring, $h_\varepsilon$ in each later year), a public signal about the name, and records of past graduates
+attributed to units; growth is known and $g_i(0)=0$. M2: the
+institution and the major are seen at hiring. M3: pay is not set by a schedule. M4: the programme median equals mean
+log pay among graduates in the employer market, and programmes are large enough that averages of noise vanish.
+\item[S1 (students).] All applicants rank programmes in the same strict order, and every programme admits by
+measured ability up to capacity.
+\end{description}
+
+\subsection{The academic market}
+
+\begin{sprop}[SpringRank's large-sample limit]\label{prop:springrank}
+Assume the gravity form, H2, and that the exchange graph (pairs with $\alpha_{uv}+\alpha_{vu}>0$) is connected, and
+let $\log\varphi$ be three times continuously differentiable near 0 with $c_\varphi=(\log\varphi)'(0)>0$. Let
+$\hat s_n$ be the SpringRank scores \citep{debacco2018physical} of $A$ as the ridge vanishes, centred. Then $\hat
+s_n\to_p\hat s$, the centred solution of
+\[
+\textstyle\sum_vK_{uv}(\hat s_u-\hat s_v)=\sum_vK_{uv}\tanh z_{uv},\qquad
+z_{uv}=\tfrac12(\pi_u-\pi_v)+\tfrac12\{\log\varphi(s_u-s_v)-\log\varphi(s_v-s_u)\},
+\]
+with $K_{uv}=\alpha_{uv}+\alpha_{vu}$. To first order in $z$, that is, locally, for small differences in $s$ and
+$\pi$ between exchanging departments, $\hat s=c_\varphi s+\tfrac12\pi+\text{const}$, so $\hat
+s/c_\varphi=s^*:=s+\pi/(2c_\varphi)$ up to a constant. The approximation error is of third order in those
+differences.
+\end{sprop}
+
+\emph{Proof.} SpringRank minimises $\tfrac12\sum_{uv}A_{uv}(\hat s_u-\hat s_v-1)^2$ plus a ridge. Its first-order
+condition as the ridge vanishes is $\sum_v(A_{uv}+A_{vu})(\hat s_u-\hat s_v)=\sum_v(A_{uv}-A_{vu})$, a Laplacian
+system whose centred solution is unique and continuous in $A/n$ on connected graphs. By H2 and the continuous
+mapping theorem, $\hat s_n$ converges in probability to the solution with $A/n$ replaced by $\alpha$. Under the
+gravity form $\zeta$ cancels from $\alpha_{uv}/\alpha_{vu}=\exp(2z_{uv})$, so
+$(\alpha_{uv}-\alpha_{vu})/(\alpha_{uv}+\alpha_{vu})=\tanh z_{uv}$. Because $\log\varphi$ has a continuous third
+derivative near 0, its odd part is $c_\varphi\Delta+O(\Delta^3)$, and $\tanh z=z+O(z^3)$, so to first order the
+right side is
+$\sum_vK_{uv}\{c_\varphi(s_u-s_v)+\tfrac12(\pi_u-\pi_v)\}$, which $c_\varphi s+\tfrac12\pi$ solves; connectedness makes
+the solution unique up to a constant. \qedsq
+
+\emph{Academic reputation} is therefore the revealed position $s^*$, an estimable parameter of the flow model.
+Reading it as the valuation $s$ requires H0, an identifying normalisation that only outside data on production and
+hiring can audit. The production audit in Section~\ref{sec:si-slope} finds that a degree-corrected rank, which
+allows for production and hiring volume, keeps all of the coupling of $F$ with pay; it does not test H0 itself.
+Directions of exchange depend on $s$ and $\pi$ only through $z$ and cannot separate them.
+
+\subsection{The graduate market}
+
+\begin{slemma}[Attribution weights]\label{lem:umbrella}
+Let the employers of a local market share a record of $n^e_{ig}$ graduates of each programme $(i,g)$, with
+$n^e_i=\sum_gn^e_{ig}$. Give the name's standardised mean $x_i$ a normal prior with variance $\tau_i^2$, and let
+department deviations, with prior variance $\tau_y^2$, be learned from the $n^e_{if}\delta_f$ graduates attributed
+to $(i,f)$, with $\delta_f$ the attribution probability. Then the name's belief is
+$\hat x_i=\omega_i(x_i+\nu_i)+(1-\omega_i)p_i$ and the belief about $y_{if}$ is $\omega_f(y_{if}+\nu_{if})$, with
+\[
+\omega_i=\frac{n^e_i\tau_i^2}{n^e_i\tau_i^2+\bar\sigma^2},\qquad
+\omega_f=\frac{n^e_{if}\delta_f\tau_y^2}{n^e_{if}\delta_f\tau_y^2+\sigma^2},
+\]
+$p_i$ the prior mean, $\bar\sigma^2$ the pooled per-graduate variance in standardised units, and $\nu$ record
+noise. Hence $\omega_i\ge\omega_f$ whenever $\tau_i^2/\bar\sigma^2\ge\tau_y^2/\sigma^2$, $\omega_i\to1$ as
+$n^e_i\to\infty$, and $\omega_f\to0$ as $\delta_f\to0$.
+\end{slemma}
+
+\emph{Proof.} A record of $n$ observations of a unit has mean equal to the unit's value plus noise of variance
+(per-observation variance)$/n$, and normal updating from a prior of variance $\tau^2$ gives the posterior mean
+$\omega\cdot\text{record}+(1-\omega)\cdot\text{prior mean}$ with $\omega=n\tau^2/(n\tau^2+\text{per-observation
+variance})$. The name's record pools all $n^e_i$ graduates; a department's record holds the $n^e_{if}\delta_f$
+attributed to it. The map $n\tau^2\mapsto n\tau^2/(n\tau^2+c)$ is increasing, and $n^e_i\ge n^e_{if}\delta_f$.
+\qedsq
+
+\begin{slemma}[Programme wage]\label{lem:wage}
+Under M1--M4, with $R_{if}=\beta_f\hat x_i+\omega_f(y_{if}+\nu_{if})$,
+\[
+m_{if}(t)=\mu_f(t)+V_{if}(t)+\beta_fg_i(t),\qquad V_{if}(t)=(1-\lambda_t)R_{if}+\lambda_t\theta_{if},\qquad
+\lambda_t=b+(1-b)\frac{t}{t+k},
+\]
+with $b=h_b/(h_0+h_b)$, $k=(h_0+h_b)/h_\varepsilon$ and $h_0$ the prior precision of a graduate's productivity
+given the programme's record. Equivalently $m_{if}(t)-\mu_f(t)=\beta_fM_i(t)+\Lambda_{ft}\,y_{if}+
+(1-\lambda_t)\omega_f\nu_{if}$, with $M_i(t)=(1-\lambda_t)\hat x_i+\lambda_tx_i+g_i(t)$ and
+$\Lambda_{ft}=\omega_f+(1-\omega_f)\lambda_t$; the university-wide part of pay is $m^U_{if}(t)=\beta_fM_i(t)$.
+\end{slemma}
+
+\emph{Proof.} After the hiring signal and $t$ yearly signals, normal updating gives the posterior mean
+$(1-\lambda_t)R_{if}+\lambda_t\bar z_k$, where $\bar z_k$ is the precision-weighted mean of $k$'s signals, and
+$\lambda_t=(h_b+th_\varepsilon)/(h_0+h_b+th_\varepsilon)=b+(1-b)t/(t+k)$. The wage adds the known growth. Averaging
+over the programme's graduates removes $\varepsilon_k$ and the signal noise (M4). Substituting
+$\theta_{if}=\beta_fx_i+y_{if}$ and $R_{if}$ and collecting the coefficient of $y_{if}$,
+$(1-\lambda_t)\omega_f+\lambda_t=\Lambda_{ft}$, gives the second form. \qedsq
+
+\emph{Employer reputation} is $V_{if}(t)$, the graduate market's mean belief about the productivity of the
+programme's graduates $t$ years after graduation; under M1--M4 it equals pay net of the field mean and of growth.
+The reputation premium decays with learning, $V(t)-\theta=(1-\lambda_t)(R-\theta)$. At a name with $\omega_i=1$,
+the university-wide parts of $V$ and $\theta$ coincide. Pay at well-known names then ranks selection-inclusive
+expected productivity, and belief and mean productivity cannot be separated there.
+
+\begin{slemma}[Selectivity as a revealed ranking]\label{lem:students}
+Under S1 the stable matching is unique \citep{gale1962college}: it assigns the applicants of highest measured
+ability to the highest-ranked programme up to capacity, the next to the second, and so on. Every location statistic
+of measured intake ability then orders programmes as students' common ranking does.
+\end{slemma}
+
+\emph{Proof.} In the serial assignment, an applicant who prefers programme $j$ to her own has $j$ ranked higher;
+$j$ was filled before she was placed, and only with applicants of higher measured ability, so no pair blocks.
+Uniqueness follows by induction on the number of programmes: in any stable matching, the top programme must hold
+exactly its capacity of highest-ability applicants, or one of them and the top programme form a blocking pair.
+\qedsq
+
+S1 is strong: tastes, comparative advantage and self-selection on gains \citep{kirkeboen2016field} break it. Intake
+therefore records who enrols in equilibrium, not students' preferences. A programme-level intake ordering exists
+only where admission is by programme, as in the UK; US selectivity is university-level.
+
+\subsection{What agreement measures}
+
+\begin{sprop}[What agreement measures]\label{prop:agree}
+Under A0, E, A-orth and Lemmas~\ref{lem:umbrella} and~\ref{lem:wage}, the normal-score correlation of $F$ and
+$Y(t)$ is $\sqrt{\mathrm{rel}_F\mathrm{rel}_Y}\,\mathrm{Corr}\{s^*,m(t)\}$, with which the Spearman coupling
+$\rho_f(t)$ increases, and
+\begin{equation}\label{eq:decomp}
+\mathrm{Cov}(s^*,m)=\underbrace{\frac{\mathrm{Cov}(s^*,\xi)\,\mathrm{Cov}(\xi,m)}{\mathrm{Var}\,\xi}}_{\text{through measured intake}}
++\underbrace{\alpha_f\mathrm{Cov}(a^{\perp\xi},m^U)}_{\text{university, beyond intake}}
++\underbrace{\Lambda_{ft}\kappa_f\sigma_r\sigma_y}_{\text{field-specific}}
++\underbrace{\frac{\mathrm{Cov}(\pi^{\perp\xi},m)}{2c_\varphi}}_{\text{production}}.
+\end{equation}
+The partial covariance given $S$ is the last three terms plus $(1-\mathrm{rel}_S)$ times the first.
+\end{sprop}
+
+\emph{Proof.} By E, $\mathrm{Cov}(F,Y)=\mathrm{Cov}(s^*,m)$, $\mathrm{Var}\,F=\mathrm{Var}\,s^*/\mathrm{rel}_F$ and
+$\mathrm{Var}\,Y=\mathrm{Var}\,m/\mathrm{rel}_Y$, which gives the first statement; by A0, $\rho_f$ is a strictly
+increasing function of the normal-score correlation. By Lemma~\ref{lem:wage}, $m-\mu_f=m^U+\Lambda_{ft}y$ plus
+record noise. Write $s^*=\alpha_fa+r+\pi/(2c_\varphi)$ and project on $\xi$:
+$s^*=\{\mathrm{Cov}(s^*,\xi)/\sigma_\xi^2\}\,\xi+s^{*\perp\xi}$ with
+$s^{*\perp\xi}=\alpha_fa^{\perp\xi}+r+\pi^{\perp\xi}/(2c_\varphi)$, since $\mathrm{Cov}(r,\xi)=0$. By A-orth,
+$\mathrm{Cov}(a^{\perp\xi},m)=\mathrm{Cov}(a^{\perp\xi},m^U)$, $\mathrm{Cov}(\xi,m)=\mathrm{Cov}(\xi,m^U)$ and
+$\mathrm{Cov}(r,m)=\Lambda_{ft}\kappa_f\sigma_r\sigma_y$. Summing gives (\ref{eq:decomp}). For the partial,
+$\mathrm{Cov}(F,S)\mathrm{Cov}(S,Y)/\mathrm{Var}\,S$ equals $\mathrm{rel}_S$ times the first term, because
+$\mathrm{Var}\,S=\sigma_\xi^2/\mathrm{rel}_S$. \qedsq
+
+The first term is not selection alone: peer quality and resources that rise with intake load on $\xi$
+\citep{dale2002estimating}, and at the programme mean a graduate's own ability and her peers' cannot be separated.
+If students sort on reputation \citep{macleod2015reputation}, intake is partly an outcome of reputation, and
+controlling it removes the part of agreement that runs through attracting students.
+
+\begin{sprop}[University or department]\label{prop:level}
+Fix a field and let $F$, $G$ and $Y$ be standardised on a common scale. Let $c_F$ and $c_G$ be the correlations of $F$
+and $G$ with $Y$, $\cos\vartheta$ ($0<\vartheta<\pi$) the correlation of $F$ and $G$,
+$H=(F-G\cos\vartheta)/\sin\vartheta$ the standardised residual of $F$ on $G$, and $\mathrm{sr}_F=\mathrm{Corr}(Y,H)$.
+
+(a) \emph{Identity; exact on any scale.} $c_F=c_G\cos\vartheta+\mathrm{sr}_F\sin\vartheta$, and $F$ out-predicts $G$
+($c_F>c_G$) if and only if $\mathrm{sr}_F>c_G\tan(\vartheta/2)$.
+
+(b) \emph{Model; exact on normal scores.} Let $F$, $G$ and $Y$ be the normal scores of A0, assume E, A-orth, H0 and
+Lemma~\ref{lem:wage}, and let $G$ measure $a$ without error ($G=a$). Then $F^{\perp G}=r+e_F$,
+$\mathrm{Cov}(Y,F^{\perp G})=\Lambda_{ft}\kappa_f\sigma_r\sigma_y$, the field-specific term of~(\ref{eq:decomp}), and
+\begin{gather*}
+\mathrm{sr}_F=\sqrt{\mathrm{rel}_H\,\mathrm{rel}_Y}\;\mathrm{Corr}(r,m),\qquad
+\mathrm{Corr}(r,m)=\frac{\Lambda_{ft}\kappa_f\sigma_y}{\mathrm{sd}\,m},\\
+\mathrm{rel}_H=\frac{\sigma_r^2}{\sigma_r^2+\mathrm{Var}\,e_F}=1-\frac{1-\mathrm{rel}_F}{\sin^2\vartheta}\le\mathrm{rel}_F,
+\end{gather*}
+with equality only if $\mathrm{rel}_F=1$ or $\alpha_f=0$. The slope of $Y$ on $F^{\perp G}$ is $\mathrm{rel}_H$ times
+$\Lambda_{ft}\kappa_f\sigma_y/\sigma_r$, the slope of $m$ on $r$.
+\end{sprop}
+
+Part (a) uses only linearity. Part (b) uses only second moments; A0 enters by fixing the scale, normal scores, on which
+the linear model holds. Error in $F$ thus attenuates $\mathrm{sr}_F$ by $\sqrt{\mathrm{rel}_H}$ and the slope by
+$\mathrm{rel}_H$. These are the forms of the residual-reliability corrections of Section~\ref{sec:si-contrast}, and
+$\mathrm{rel}_H$ is the value of $\lambda$ there for a design that holds $G$ alone. On ordinary ranks, (a) still holds
+but (b) does not, because ranks are not linear in $s^*+e_F$; Lemma~\ref{lem:ranks} gives the exact discrepancy under A0.
+
+\emph{Proof.} (a) With $F$ and $G$ standardised, the slope of $F$ on $G$ is $\cos\vartheta$ and the residual
+$F-G\cos\vartheta$ has variance $\sin^2\vartheta$, so $H$ has unit variance and is uncorrelated with $G$. Then
+$c_F=\mathrm{Cov}(Y,G\cos\vartheta+H\sin\vartheta)=c_G\cos\vartheta+\mathrm{sr}_F\sin\vartheta$, so
+$c_F-c_G=\mathrm{sr}_F\sin\vartheta-c_G(1-\cos\vartheta)$, which is positive if and only if
+$\mathrm{sr}_F>c_G(1-\cos\vartheta)/\sin\vartheta=c_G\tan(\vartheta/2)$. Only linearity and standardisation are used, so
+(a) holds for population and sample moments alike, on normal scores and on ordinary standardised ranks with Spearman
+correlations in place of the $c_X$.
+(b) Under H0, $s^*=\alpha_fa+r$ up to a constant, so $F=\alpha_fa+r+e_F$ by E, with $\mathrm{Var}\,a=1$,
+$\mathrm{Cov}(a,r)=0$ by the definition of $r$ and $\mathrm{Cov}(a,e_F)=0$ by E. The projection of $F$ on $G=a$ is
+therefore $\alpha_fa$, and $F^{\perp G}=r+e_F$. Its variance is $\sin^2\vartheta\,\mathrm{Var}\,F$, and
+$\mathrm{Var}\,e_F=(1-\mathrm{rel}_F)\mathrm{Var}\,F$, which gives the second form of $\mathrm{rel}_H$; when
+$\alpha_f\neq0$, $\sin^2\vartheta<1$ and $\mathrm{rel}_H<\mathrm{rel}_F$ unless $\mathrm{rel}_F=1$. By
+Lemma~\ref{lem:wage}, $Y-\mu_f=\beta_fM+\Lambda_{ft}y+(1-\lambda_t)\omega_f\nu+e_Y$, with $M$ university-wide.
+By A-orth, $M$ is uncorrelated with $r$; record noise and $e_Y$ are uncorrelated
+with $r$, and $e_F$ with every term of $Y$ (E). Hence $\mathrm{Cov}(Y,r+e_F)=\Lambda_{ft}\mathrm{Cov}(y,r)=
+\Lambda_{ft}\kappa_f\sigma_r\sigma_y$. Dividing by $\mathrm{sd}\,Y\cdot\mathrm{sd}\,F^{\perp G}$, with
+$\mathrm{sd}\,m=\sqrt{\mathrm{rel}_Y}\,\mathrm{sd}\,Y$ and $\sigma_r=\sqrt{\mathrm{rel}_H}\,\mathrm{sd}\,F^{\perp G}$, gives
+$\mathrm{sr}_F$; dividing by $\mathrm{Var}\,F^{\perp G}=\sigma_r^2/\mathrm{rel}_H$ gives the slope. Two terms vanish only
+under the stated assumptions. Without H0, $F^{\perp G}$ also carries $\pi^{\perp a}/(2c_\varphi)$, which adds
+$\mathrm{Cov}(\pi^{\perp a},m)/(2c_\varphi)$ to the covariance. If $G=a+e_G$, the projection coefficient is
+$\alpha_f\mathrm{rel}_G$, $F^{\perp G}$ also carries $\alpha_f\{(1-\mathrm{rel}_G)a-\mathrm{rel}_Ge_G\}$, and the
+covariance gains $\alpha_f(1-\mathrm{rel}_G)\mathrm{Cov}(a,m^U)$. \qedsq
+
+\begin{slemma}[Ordinary ranks]\label{lem:ranks}
+Assume A0 for $(F,G,Y)$ within a field. Write $c_X$, $\cos\vartheta$ and $\mathrm{sr}_F$ for the population
+normal-score quantities of Proposition~\ref{prop:level}, and $c^{\mathrm R}_X$, $\cos\vartheta_{\mathrm R}$ and
+$\mathrm{sr}^{\mathrm R}_F$ for the same quantities on ordinary standardised ranks, that is, with population Spearman
+correlations. Let $g(x)=\tfrac6\pi\arcsin(x/2)$ and $\mathcal B(u,v)=g(uv)-g(u)g(v)$, and write the residual covariances on
+the two scales as $\delta=c_F-c_G\cos\vartheta=\mathrm{sr}_F\sin\vartheta$ and
+$\delta_{\mathrm R}=c^{\mathrm R}_F-c^{\mathrm R}_G\cos\vartheta_{\mathrm R}=\mathrm{sr}^{\mathrm R}_F\sin\vartheta_{\mathrm R}$.
+\begin{description}
+\item[(i) Exact.] $c^{\mathrm R}_X=g(c_X)$ and $\cos\vartheta_{\mathrm R}=g(\cos\vartheta)$. Hence
+$c^{\mathrm R}_F-c^{\mathrm R}_G=g'(\zeta_1)(c_F-c_G)$ for some $\zeta_1$ between $c_G$ and $c_F$, and the two
+differences have the same sign.
+\item[(ii) Exact.] $\delta_{\mathrm R}=g'(\zeta)\,\delta+\mathcal B(c_G,\cos\vartheta)$ for some $\zeta$ between
+$c_G\cos\vartheta$ and $c_F$. Throughout, $3/\pi\le g'\le2\sqrt3/\pi$, that is, $0.954\le g'\le1.103$, and $g'\le0.987$
+where $|\zeta|\le1/2$.
+\item[(iii) Bound.] $\mathcal B(u,v)$ has the sign of $uv$ and is zero only if $u$ or $v$ is $0$ or $\pm1$, and
+\[
+|\mathcal B(u,v)|\le\sqrt{\mathcal B(u,u)\,\mathcal B(v,v)}\le(1-3/\pi)\,|uv|\approx0.0451\,|uv|.
+\]
+Over all $u$ and $v$, $|\mathcal B|$ is at most 0.0071 (a numerical value).
+\item[(iv) Consequence.] $\mathrm{sr}^{\mathrm R}_F=k\,\mathrm{sr}_F+\mathcal B(c_G,\cos\vartheta)/\sin\vartheta_{\mathrm R}$, with
+$k=g'(\zeta)\sin\vartheta/\sin\vartheta_{\mathrm R}\in[0.90,1.11]$. When the field-specific term is zero, the rank
+semipartial correlation is $\mathcal B(c_G,\cos\vartheta)/\sin\vartheta_{\mathrm R}$, not zero.
+\end{description}
+\end{slemma}
+
+\emph{Proof.} (i) Spearman correlations are invariant under strictly increasing transformations, so they equal those
+of the normal scores, which A0 makes jointly normal. For a bivariate normal pair with correlation $r$ the population
+Spearman correlation is $g(r)$ \citep{kruskal1958ordinal}. $g$ is odd, and $g'(x)=(3/\pi)(1-x^2/4)^{-1/2}$ rises with
+$|x|$ from $3/\pi$ at 0 to $0.986$ at $|x|=1/2$ and $2\sqrt3/\pi$ at $|x|=1$; the mean value theorem gives the rest.
+(ii) $\delta_{\mathrm R}=g(c_F)-g(c_G)g(\cos\vartheta)=\{g(c_F)-g(c_G\cos\vartheta)\}+\mathcal B(c_G,\cos\vartheta)$, and
+$c_F-c_G\cos\vartheta=\delta$; apply the mean value theorem to the bracket.
+(iii) The series $\arcsin x=\sum_{k\ge0}\binom{2k}{k}x^{2k+1}/\{4^k(2k+1)\}$ has positive coefficients and converges
+for $|x|\le1$, so $g(x)=\sum_{k\ge0}p_kx^{2k+1}$ on $[-1,1]$, with $p_k=\tfrac6\pi\binom{2k}{k}/\{2^{4k+1}(2k+1)\}>0$,
+$p_0=3/\pi$ and $\sum_kp_k=g(1)=1$. Let $N$ take the value $2k+1$ with probability $p_k$, and let $N'$ be an
+independent copy. Then $g(x)=\mathrm E\,x^N$, and
+\[
+B(u,v)=\mathrm E\,(uv)^N-\mathrm E\,u^N\,\mathrm E\,v^N=\mathrm{Cov}(u^N,v^N)=
+\tfrac12\,\mathrm E\{(u^N-u^{N'})(v^N-v^{N'})\}.
+\]
+For $u,v\in[0,1]$ both powers are non-increasing in $N$, so the product is non-negative and $\mathcal B\ge0$. For
+$u,v\in(0,1)$ the product is positive whenever $N\neq N'$, so $\mathcal B>0$. If $u$ or $v$ is 0 or 1, $u^N$ or $v^N$ is
+constant and $\mathcal B=0$. Because $N$ is odd, $\mathcal B$ is odd in each argument, which gives the sign elsewhere. By
+Cauchy--Schwarz, $|\mathcal B(u,v)|\le\mathrm{sd}(u^N)\,\mathrm{sd}(v^N)$, and $\mathrm{Var}\,u^N=g(u^2)-g(u)^2=\mathcal B(u,u)$. Because
+$u^N=u$ when $N=1$ and $|u-u^N|\le|u|$ otherwise, $\mathrm{Var}\,u^N\le\mathrm E(u^N-u)^2\le(1-p_0)u^2$. By the same
+Cauchy--Schwarz step, the largest $|\mathcal B|$ is the largest $\mathcal B(w,w)$, which a grid over $[0,1]$ puts at 0.00703, at $w\approx0.60$.
+(iv) Divide (ii) by $\sin\vartheta_{\mathrm R}$. Since $|x^N|\le|x|$, $|g(x)|\le|x|$, so
+$\sin\vartheta_{\mathrm R}\ge\sin\vartheta$. Numerically, $\sin\vartheta/\sin\vartheta_{\mathrm R}\ge0.952$, its limit
+$g'(1)^{-1/2}$ as $\cos\vartheta\to1$. \qedsq
+
+The lemma compares population quantities. In a sample, Spearman and Blom-score correlations estimate them with errors
+of order $n^{-1/2}$, and the expected sample Spearman correlation differs from $g(r)$ by a term of order $1/n$.
+
+\emph{Which scale each analysis uses, and the size of the discrepancy.} The within-university contrast and the
+calibrated test (Section~\ref{sec:si-contrast}) correlate Blom normal scores within field and their linear
+residuals. That is the scale of part~(b) and of Remark~\ref{rem:within}, so the residual offset of
+Lemma~\ref{lem:ranks}(ii)--(iv) does not arise there. The comparison of $F$ with $G$ in Table~\ref{tab:si-map} uses
+pairwise Spearman
+correlations and only part~(a), which is exact on ranks. By Lemma~\ref{lem:ranks}(i), its sign in each field is the
+same on normal scores; mapped field by field through $r=2\sin(\pi\rho/6)$, the mean difference $c_F-c_G$ is
+$-0.055$ on normal scores against $-0.054$ on ranks. Over these 58 fields, the Spearman correlations average
+$c^{\mathrm R}_F=0.37$, $c^{\mathrm R}_G=0.42$ and $\cos\vartheta_{\mathrm R}=0.81$. For $c^{\mathrm R}_G$ between
+0.40 and 0.45 and $\cos\vartheta_{\mathrm R}$ between 0.80 and 0.90, $\mathcal B$ lies between 0.0027 and 0.0049, and the offset
+$\mathcal B/\sin\vartheta_{\mathrm R}$ in $\mathrm{sr}^{\mathrm R}_F$ lies between 0.006 and 0.008. Evaluated field by field, $\mathcal B$
+averages 0.0035 and ranges from $-0.003$ to $+0.007$; it is negative only in the three fields with $c_G<0$. Ranks
+therefore overstate the department's residual part slightly: the mean semipartial correlation is 0.043 on ranks
+($\mathrm{sr}^{\mathrm R}_F$) and 0.037 on normal scores ($\mathrm{sr}_F$), against a mean threshold $c_G\tan(\vartheta/2)$ of 0.13. Take an example with $\cos\vartheta=0.8$,
+$c_G=0.6$ and $c_F=0.48$. There $\delta=0$, but $\delta_{\mathrm R}=\mathcal B(0.6,0.8)=0.0055$. Ten simulated samples of $10^6$
+draws give a mean of 0.0053 on ordinary ranks and $-0.0001$ on Blom scores.
+
+The standardised rank regressions of pay on $F$ and $G$ (Section~\ref{sec:si-career}) are the three-variable case:
+their loadings are formed from the Spearman correlations of one cell. The loading on $F$ is
+$\delta_{\mathrm R}/\sin^2\vartheta_{\mathrm R}$, which by (ii) equals $k'b_F+\mathcal B/\sin^2\vartheta_{\mathrm R}$,
+with $b_F=\delta/\sin^2\vartheta$ the normal-score loading and $k'=g'(\zeta)\sin^2\vartheta/\sin^2\vartheta_{\mathrm R}
+\in[0.86,1.11]$. At $\cos\vartheta_{\mathrm R}=0.85$ (the mean within
+PSEO cells) and $c^{\mathrm R}_G$ between 0.3 and 0.6, the offset is 0.011 to 0.016, and at most 0.019 for any
+correlations. The loading on $F$ itself is 0.13 one year after graduation, and the loading on $G$ has an offset of the
+same kind. Over these values, the offset changes by at most 0.03 per unit of $c^{\mathrm R}_G$. A rise in agreement of
+0.03 per year, the size of the rises in Section~\ref{sec:si-career}, therefore moves it by under 0.001 per year. No
+reported conclusion changes. Partial rank correlations with several controls, such as the agreement net of
+selectivity in Table~\ref{tab:si-map}, fall outside the lemma.
+
+\begin{sremark}[The within-university correlation]\label{rem:within}
+Suppose in addition that, on the scores standardised within field, the university-wide loadings
+$\alpha_f/\mathrm{sd}_f(F)$ and $\beta_f/\mathrm{sd}_f(Y)$, and $\lambda_t$, are the same in every field. University
+fixed effects then absorb the university-wide parts. Within universities, $F$ retains $r_{if}-\bar r_i+e_F$ (plus the
+within-university part of $\pi/(2c_\varphi)$ without H0), and pay retains
+$\Lambda_{ft}(y_{if}-\bar y_i)+(1-\lambda_t)\omega_f\nu_{if}+e_Y$, up to the field scale factors; $\bar r_i$ and
+$\bar y_i$ are means over the university's fields. By A-orth and E, up to terms of order $1/n_i$ ($n_i$ fields per
+university), the within-university covariance in field $f$ is
+\[
+\mathrm{Cov}_{\mathrm{w}}(F,Y)=\Lambda_{ft}\kappa_f\sigma_r\sigma_y ,
+\]
+the field-specific term of Proposition~\ref{prop:agree} and the object that $\mathrm{sr}_F$ reflects in
+Proposition~\ref{prop:level}. The pooled statistic averages it over fields with programme weights.
+
+For the correlation, let employers' prior variance of department deviations equal their true variance,
+$\tau_y^2=\sigma_y^2$; every statement about $\kappa_f$ below relies on this assumption. The department record noise then has variance $\sigma_y^2(1-\omega_f)/\omega_f$
+(Lemma~\ref{lem:umbrella}), and the latent within part of pay has variance
+$\sigma_y^2\{\Lambda_{ft}^2+(1-\lambda_t)^2\omega_f(1-\omega_f)\}=\sigma_y^2\{\omega_f+\lambda_t^2(1-\omega_f)\}$. Hence
+\[
+\mathrm{Corr}_{\mathrm{w}}(F,Y)=\kappa_f\sqrt{\mathrm{rel}^{\mathrm w}_F\,\mathrm{rel}^{\mathrm w}_Y}\,\sqrt{q},\qquad
+q=\frac{\Lambda_{ft}^2}{\omega_f+\lambda_t^2(1-\omega_f)},
+\]
+where $\mathrm{rel}^{\mathrm w}$ are within-university reliabilities, with record noise counted as part of the pay
+signal, as in the measured pay reliability. By convexity, $\Lambda_{ft}^2\le\omega_f+(1-\omega_f)\lambda_t^2$, so
+$q\le1$; and $\Lambda_{ft}^2-\omega_f\{\omega_f+\lambda_t^2(1-\omega_f)\}=(1-\omega_f)\lambda_t\{2\omega_f+\lambda_t
+(1-2\omega_f)\}\ge0$, so $q\ge\omega_f$. $q$ equals 1 when $\omega_f=0$ or $\omega_f=1$, and it is small only if
+$\omega_f$ is small but positive and $\lambda_t^2$ is small relative to $\omega_f$. A Monte Carlo check with
+$\kappa=0.6$, $\lambda=0.05$ and $\omega=0.2$ reproduces the formula.
+
+Three readings follow. (i) Attribution and learning enter the covariance and the pay slope directly through
+$\Lambda_{ft}$. (ii) In the observed correlation they also enter through $\mathrm{rel}^{\mathrm w}_Y$, which is measured
+(0.836 in the UK; 0.548 in the US with university and field fixed effects, Table~\ref{tab:si-reliab}) and built into
+the calibrated test. (iii) The reliability-corrected or model-based within correlation equals $\kappa_f\sqrt q$. It
+is small only if $\kappa_f$ is small or if employers attribute pay to departments from noisy records while learning
+almost nothing. Where the standardised loadings differ across fields, the residuals also carry university-wide terms
+that field-specific slopes on university-level variables absorb in part.
+\end{sremark}
+
+\emph{Entry and attribution.} By Lemma~\ref{lem:wage}, at $t=0$ with $b=0$ the field-specific covariance is
+$\omega_f\kappa_f\sigma_r\sigma_y$, which is non-zero only if employers attribute some productivity to departments.
+For $t>0$, $\Lambda_{ft}\ge\lambda_t>0$, so the covariance is non-zero whenever $\kappa_f\neq0$. With learning speeds
+of the size estimated elsewhere \citep{lange2007speed, arcidiacono2010beyond}, for example $b=0$ and $k=3$,
+$\lambda_4=4/7\approx0.57$. For the covariance and the pay slope, small attribution explains a small four-year term
+only if learning is much slower ($b\approx0$, $k\gtrsim20$). For the corrected correlation, $\lambda_4=4/7$ gives
+$q\ge0.93$ for every $\omega_f$, so a small corrected within correlation four years after graduation points, within
+the model and given $\tau_y^2=\sigma_y^2$, to a small $\kappa_f$. Nothing in these data measures learning speed.
+
+\subsection{Years since graduation and pay schedules}
+
+\begin{sprop}[Years since graduation and pay schedules]\label{prop:time}
+(a) For any indicator $Z$, $\mathrm{Cov}\{Z,m(t)\}=\mathrm{Cov}(Z,R)+\lambda_t\,\mathrm{Cov}(Z,\theta-R)+
+\beta_f\mathrm{Cov}\{Z,g(t)\}$. The middle covariance is zero if $Z$ is university-wide and $\omega_i=1$; then
+learning moves $\mathrm{Cov}\{F,m(t)\}$ only through the department term, by
+$(1-\omega_f)(\lambda_t-\lambda_0)\kappa_f\sigma_r\sigma_y$.
+(b) Let a share $\psi_p$ of programme $p$'s graduates be paid on a schedule at level $\ell_p$, and write
+$\psi_p=\bar\psi_f+\tilde\psi_p$, $\ell_p=\bar\ell+\tilde\ell_p$ and $D=\overline{m^{\rm mkt}}-\bar\ell$. To first
+order, on normal scores,
+\[
+\mathrm{Corr}(F,Y)=\sqrt{\mathrm{rel}_F\,\mathrm{rel}_Y}\;
+\frac{(1-\bar\psi_f)\mathrm{Cov}(s^*,m^{\rm mkt})+\bar\psi_f\mathrm{Cov}(s^*,\ell)-D\,\mathrm{Cov}(s^*,\psi)}
+{\mathrm{sd}\,s^*\cdot\mathrm{sd}\,m},
+\]
+with $\mathrm{Var}\,m=(1-\bar\psi_f)^2\mathrm{Var}\,m^{\rm mkt}+\bar\psi_f^2\mathrm{Var}\,\tilde\ell+
+D^2\mathrm{Var}\,\tilde\psi$ plus cross terms and $\mathrm{rel}_Y=\mathrm{Var}\,m/(\mathrm{Var}\,m+
+\mathrm{Var}\,e_Y)$. If $\ell$ and $\psi$ do not vary across programmes, the true-score coupling equals that of
+market pay, $\mathrm{Corr}(s^*,m^{\rm mkt})$.
+\end{sprop}
+
+\emph{Proof.} (a) By Lemma~\ref{lem:wage}, $m(t)-\mu_f(t)=R+\lambda_t(\theta-R)+\beta_fg(t)$, which gives the
+decomposition by linearity. If $\omega_i=1$, then $\hat x=x$ up to record noise and $\theta-R=(1-\omega_f)y$, which
+is uncorrelated with every university-wide $Z$ by A-orth; for $Z=F$, $\mathrm{Cov}(F,\theta-R)=
+(1-\omega_f)\kappa_f\sigma_r\sigma_y$. (b) Treat the median as mean log pay (M4; the median of a mixture is not linear in $\psi$). Then
+$m_p=(1-\psi_p)m^{\rm mkt}_p+\psi_p\ell_p$. Expanding and dropping products of deviations,
+$m_p=\text{const}+(1-\bar\psi_f)\tilde m^{\rm mkt}_p+\bar\psi_f\tilde\ell_p-D\tilde\psi_p$. Taking the covariance
+with $s^*$ and the variance, and applying E, gives the display. With $\tilde\ell=\tilde\psi=0$, $m$ is
+$(1-\bar\psi_f)m^{\rm mkt}$ plus a constant, and correlations are scale-free. \qedsq
+
+\emph{Reading.} By (b), a schedule that only rescales market pay leaves every correlation unchanged. It lowers
+observed coupling through $\mathrm{rel}_Y$, since the programme signal variance shrinks by $(1-\bar\psi_f)^2$
+while sampling noise need not, through variation in $\tilde\ell$ and $\tilde\psi$ unrelated to $s^*$, or through
+weaker agreement in the market part. By (a), at names that employers see often ($\omega_i=1$), learning about
+individuals leaves $B_f(t)=\mathrm{Cov}\{a,m(t)\}$, the covariance of pay with university-wide standing,
+unchanged. A rise of $B_f(t)$ with years since graduation then needs growth that loads on university standing or
+learning about rarely seen names. A fall in pay variance unrelated to the orderings does not raise any covariance; it
+raises correlations and standardised loadings.
+
+\emph{Joint loadings.} The covariances in (a) do not translate one for one into the loadings of a joint regression of
+pay on $F$ and $G$, which Section~\ref{sec:si-career} reports. Suppose $G=a$ without error and H0 holds, so that
+$F=\alpha_fa+r+e_F$ on scores standardised within field, with $\mathrm{Var}\,a=1$. The population regression of
+$m(t)$ on $F$ and $G$ then has
+\[
+b_F=\frac{\Lambda_{ft}\kappa_f\sigma_r\sigma_y}{\sigma_r^2+\mathrm{Var}\,e_F},\qquad b_G=B_f(t)-\alpha_fb_F,
+\]
+because $F-\alpha_fG=r+e_F$ is the part of $F$ orthogonal to $G$ and, by A-orth, only $r$ covaries with pay within
+it. Faster learning about departments raises $\Lambda_{ft}$, which raises $b_F$ and lowers $b_G$ by $\alpha_f$ times
+as much. A rising loading on $G$ with no detectable trend in the loading on $F$ therefore points, within the model, to a rising $B_f(t)$.
+A fall in irrelevant pay variance would raise both standardised loadings by the same factor, so within the model it
+would not by itself produce that pattern; the rank regressions of Section~\ref{sec:si-career} follow these linear
+loadings only approximately, with the offset that Lemma~\ref{lem:ranks} bounds. Errors in $G$, and errors of $F$ and $G$ that are correlated because both come from the same
+hiring data, shift weight between the two loadings. Outside the model, graduate study, changing coverage, migration
+and the timing of the ranks can produce a rise as well (Section~\ref{sec:si-career}).
+
+\subsection{At an admission cutoff}
+
+\begin{scor}[At an admission cutoff]\label{cor:cutoff}
+Let graduate $k$ of programme $p=(i,f)$ have productivity $\eta_k=\beta_fa_k+\delta_p+u_k$, with $\delta_p$ the
+programme's effect on productivity, and let pay follow M1 with symmetric learning,
+$w_k(t)=\mu_f(t)+(1-\lambda_t)R_p+\lambda_t\eta_k+\beta_fg_p(t)$ plus noise. At an admission cutoff in measured
+ability, with $a_k$ and $u_k$ continuous at the cutoff, the effect of admission to $p$ for a student whose fallback
+is $p'$ in the same field is
+\[
+\tau(t)=\Delta\delta+(1-\lambda_t)(\Delta R-\Delta\delta)+\beta_f\Delta g(t),\qquad \Delta X=X_p-X_{p'}.
+\]
+\end{scor}
+
+\emph{Proof.} Compare the expected pay of the same student in $p$ and in $p'$; continuity makes the students just
+above and below the cutoff comparable, and $a_k$ and $u_k$ cancel within a field, leaving
+$(1-\lambda_t)\Delta R+\lambda_t\Delta\delta+\beta_f\Delta g(t)$. \qedsq
+
+The return at a cutoff thus contains a reputation rent that learning erodes \citep{altonji2001employer,
+macleod2017big}. Projecting cutoff estimates of $\tau$ on the target-minus-fallback gaps in the two reputations
+\citep{kirkeboen2016field} would show how much of a return goes with the university's standing and how much with
+the department's. Because the model has no channel from academic standing to pay, such loadings describe
+association across cutoffs, not causal channels.
+
+\subsection{Scope}
+
+The model uses one index per market and a linear-Gaussian form, so it cannot represent premia concentrated at the
+top of the pay distribution, which medians miss. Selection and value added are bundled at the programme level, and
+nothing in it says what attending a programme does to pay except at a cutoff. Reputations are static, so calendar
+and cohort drift lie outside it. Growth is a reduced-form slot for networks, skills, promotion ladders and sorting.
+
+% =====================================================================================================================
+\section{Department-level event studies}\label{sec:si-events}
+
+\paragraph{Feasibility.} Three quasi-experimental designs were counted before any effect was
+estimated, from event counts, release flags and pooled noise only. Upgrades of an institution's name (for example
+from college to university) leave 15 usable institutions without mergers in the PSEO data, in 12 state-by-year
+clusters. Their minimum detectable effect is 0.54 times the cross-sectional SD of institution effects, above the
+threshold of 0.5 set for the designs, so that design was judged not feasible and was not run. First accreditation (ABET for engineering and computing, AACSB for business) and Nobel prizes were judged
+marginal and were run.
+
+\paragraph{First accreditation and graduates' pay.} A staggered difference-in-differences
+\citep{callaway2021difference} compares PSEO median pay one year after graduation in departments before and after
+their first accreditation with not-yet-treated and never-treated departments in the same field (release V4.14.1).
+Inference is a multiplier cluster bootstrap of the influence function, with a correction of the variance estimator
+made after the results had been seen. The pooled estimate (ABET with information-technology cells kept, plus
+AACSB) is $+0.018$ log points \ci{-0.004}{+0.039}. This rules out large average effects; it does not show that the
+effect is zero. AACSB alone is $+0.013$ \ci{-0.012}{+0.039}. ABET with
+information-technology and information-systems cells is $+0.035$ \ci{+0.001}{+0.069}, borderline, and 26 of its 29
+entering cells are in computing; ABET without those cells fails its pre-trend test. Five-year estimates for AACSB
+and the pooled versions fail their pre-trend tests. Accreditation timing is chosen by institutions and accreditation
+also changes curricula, so even a positive estimate would not separate information from content. There is also no
+first stage: we do not observe that accreditation changes a department's reputation.
+
+\paragraph{Nobel prizes and completions.} A stacked event study compares log bachelor's completions in a
+department over years $t+2$ to $t+5$ after a Nobel prize to a member of the department, relative to year $t$, with
+control departments (88 clean events at 42 institutions; IPEDS completions). The average effect is $-0.006$ log
+points \ci{-0.073}{+0.062} (wild cluster
+restricted bootstrap inversion), with a minimum detectable effect of 0.093 and a joint pre-trend $p$ of 0.76. Because
+a four-year degree begun after an October announcement ends in $t+5$ at the earliest, the window mostly covers
+completions by students who were already enrolled when the prize was announced. The design does not test whether a
+prize draws more new entrants.
+
+% =====================================================================================================================
+\section{Occupational demand and entry conditions}\label{sec:si-demand}
+
+\paragraph{Occupational demand index.} A field-level index of national occupational demand (BLS
+Occupational Employment Statistics, 2001--2023, weighted by the occupations of each field's graduates) was related
+to coupling across PSEO graduation windows, with field and window effects, on the 2026 release of the hiring ranks
+(27 fields with fixed institutions). All three pre-specified tests have intervals that
+include zero and minimum detectable effects above the pre-set threshold, so all three are underpowered. Per SD of
+demand, one-year coupling of $F$ changes by $-0.012$ \ci{-0.099}{+0.053}, one-year coupling of $F$ net of $G$ by
+$-0.048$ \ci{-0.132}{+0.010}, and five-year coupling of $F$ by $-0.031$ \ci{-0.119}{+0.033} (wild cluster
+restricted bootstrap inversion). Most movements of the index are national and shared by all fields, so little
+variation remains after window effects.
+
+\paragraph{Entry conditions.} The graduation window that entered the labour market in the Great
+Recession has lower one-year coupling than its neighbours, the opposite of the pre-specified prediction. By size, its
+departure ranks second of the five interior windows (placebo rank $p=0.40$; with five windows it cannot fall below
+0.20). The COVID-era window also departs in the opposite direction from the prediction. An institution-level test of entry unemployment is underpowered at one and
+five years; at ten years it is positive by the pre-set rule but does not survive a pre-specified sensitivity with
+field-by-window effects. These tests give no robust support to a link between entry conditions and agreement.
+
+% =====================================================================================================================
+\section{What was specified before and after the results}\label{sec:si-prereg}
+
+Table~\ref{tab:si-status} gives the specification status of each analysis. A test we call pre-specified was
+specified in the analysis script before that estimate was computed, after results of earlier analyses had been seen;
+within analyses added later in response to results already seen, the term refers to their own outcomes. No analysis
+was publicly registered, and the specifications, which the scripts record, were not committed to version control
+before the estimating runs.
+
+\begingroup
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{3pt}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{8.2cm}@{}}
+\caption{Specification status. Pre-specified: specified in the analysis script, with its reading rule where it has
+one, before its estimate was computed, and not added in response to the main results or to its own first results.
+After related results: added after the first results of the same analysis, or specified after the main results had
+been seen; the note says whether before its own outcome, to which pre-specified refers inside it
+(Tables~\ref{tab:si-size}, \ref{tab:si-pcp} and~\ref{tab:si-pred}). Exploratory: fixed after its own results or a
+development run had been seen, or reported without a reading rule.}\label{tab:si-status}\\
+\toprule
+Analysis (section) & Status & Note \\
+\midrule
+\endfirsthead
+\toprule
+Analysis (section) & Status & Note \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Two-level contrast for the three UK pairs and US $F$--pay: statistics, reliabilities, bootstrap and reading rule
+(\ref{sec:si-contrast}) & pre-specified & the rule proved miscalibrated (Section~\ref{sec:si-rule}); its verdicts are
+reported, not used as evidence \\
+Calibrated test and model-based estimates for the UK; linear-score version; UK robustness subsets; UK
+university-mean correlations (\ref{sec:si-contrast}) & after related results & added after the first results of the
+contrast had been seen \\
+US contrast with university and field fixed effects only, its calibrated test and model-based estimates
+(\ref{sec:si-contrast}) & after related results & added after the first results, because the pre-specified within
+value also removed field-specific slopes that the across value did not \\
+Calibration audit T1--T4 (\ref{sec:si-audit}) & after related results & specified after the main results had been
+seen and before any of its outcomes was computed; the Clopper--Pearson intervals and the nulls for every grid point
+of T2 (a) were added after its results \\
+Loading families and verdict nulls of T2 (a) (\ref{sec:si-audit}) & exploratory & chosen after a diagnostic run had
+compared simulated with observed within correlations and a development run had computed T2 (a) $P$-values with 40
+null draws; not changed afterwards \\
+Production re-estimates of the US slope; bound under proportional selection (\ref{sec:si-slope}) & pre-specified & \\
+Production adjustment inside the slope design (\ref{sec:si-slope}) & after related results & added after the first
+results \\
+UK slope design and its variants; shares of the UK pay gradient that survive prior-attainment controls
+(\ref{sec:si-slope}) & pre-specified & except the rows marked exploratory \\
+Positive control P1 and prediction P2, with their rules (\ref{sec:si-pcp}) & after related results & specified after
+the main results had been seen and before any of their outcomes was computed \\
+P1 sensitivities with controls or dropped programmes; prediction rows that locate the gain; university-cluster
+intervals of the prediction (\ref{sec:si-pcp}) & exploratory & added after a development run or the results had been seen; no rule; the
+pre-specified verdicts are unchanged \\
+Field map, its relation to selectivity, $F$ against $G$, UK rank coupling under prior-attainment controls, US career
+slopes within cohorts, UK careers and pay scales (\ref{sec:si-slope}--\ref{sec:si-career}) & exploratory & earlier analyses; the canonical US specification was fixed
+after the main analyses had been run and before drafting \\
+Heterogeneity across fields under pay noise (\ref{sec:si-data}); entry-year selectivity controls
+(\ref{sec:si-map}); career-time surface, loadings, graduate study, coverage and location (\ref{sec:si-career}) &
+pre-specified & \\
+Model of Section~\ref{sec:si-model} & after related results & written after most results had been seen \\
+Tests T0--T8 of the model (\ref{sec:si-slope}, \ref{sec:si-career}) & pre-specified & specified after most other
+results; one benchmark calibration in T1 was fixed after the literal one degenerated \\
+Event studies: feasibility, accreditation, Nobel prizes (\ref{sec:si-events}) & pre-specified & the accreditation
+variance estimator and the scope statement of the Nobel design were corrected after the results had been seen \\
+Occupational demand index and entry conditions (\ref{sec:si-demand}) & pre-specified & \\
+Checks on existing cells: US university-mean correlation, rank places per SD of $F$, sensitivity to pooled pay, sample-flow
+counts (\ref{sec:si-data}) & exploratory & computed after the main results had been seen \\
+Re-run of every analysis that reads the US hiring ranks on the 2026 release with the repaired name join (all
+sections) & after related results & run after all other results had been seen, with unchanged specifications
+except that one field without a computable noise variance leaves the heterogeneity sample and that the readings of
+model test T1 that relied on the censoring of the earlier export are no longer interpretable \\
+\end{longtable}
+\endgroup
+
+% =====================================================================================================================
+\section{Details of the main-text figures}\label{sec:si-figs}
+
+The main-text captions say only how to read each figure; this section gives the statistics, interval types and
+samples behind them. The figure scripts (Table~\ref{tab:si-code}) compute no estimate: they read the tables written
+by the analysis scripts and select each row by an exact key. All five figures share one style: blue marks agreement across universities for the department-level measure, vermilion
+statistics within universities, pink the university-wide rank $G$, green the NRC research measures and orange the UK
+subjects paid on national scales.
+
+\paragraph{Fig.~1 (two levels).} Blue: Pearson correlation of the Blom normal scores of the two orderings across
+universities within a field (US) or subject (UK), a total correlation that mixes variation between and within
+universities. Vermilion: the same correlation within universities, after university and field fixed effects; it is a
+different statistic, and the gap between the two is not a decomposition. Bars are 95\% cluster-bootstrap CIs (2,000
+replicates). Grey bands: central 95\% of the within-university correlation in 600 data sets simulated on the real
+layout, with equal agreement at both levels and each measure's noise; the tick marks their mean. In every pair no
+simulated value is as low as the observed one ($P=0.0017$, the smallest attainable), so the test rejects equal
+agreement under the fitted measurement model (Section~\ref{sec:si-calib}). The intake rows are supporting evidence.
+US: 3,961 programmes, 214 universities, 53 fields. UK: 864 programmes, 111 providers, 15 subjects.
+
+\paragraph{Fig.~2 (academic information inside a university).} (A) Within-university correlations (normal scores,
+university and field fixed effects) of $F$ with NRC research measures for 2005--06 and with Scorecard four-year pay
+on the same programmes; 95\% university-cluster bootstrap intervals (2,000 draws). Primary cells: 1,484 programmes,
+173 universities and 24 same-name fields of the fixed-effects-only sample; the other measures use their own cells
+(1,110 to 1,484 programmes). Publications per faculty is the measure the rule names; citations, grants and the R and S
+rankings are named secondary measures, awards and the research-activity ranking exploratory. The rankings are
+midpoints of the NRC's 5th--95th percentile ranges with the sign reversed, and the R and S rankings also weight
+doctoral production and placement. The last row (post hoc) controls allocated faculty and doctorates graduated.
+Values in Table~\ref{tab:si-pcp}. (B) Gain in out-of-sample $R^2$ of log four-year median pay, in percentage points,
+with university-cluster bootstrap 95\% intervals. Task 1 holds out whole universities (10 folds, 5 repeats; 3,961
+programmes, 214 universities); task 2 holds out one programme at a time at universities with at least three
+programmes and uses the mean residual pay of the university's other programmes (3,935 programmes, 201 universities).
+Top row: $F$ with field-specific slopes, the pre-specified comparison. Below the rule, post hoc and exploratory:
+field-specific slopes on $G$ alone, without $F$; the mean $z(F)$ of the university's other programmes, with
+field-specific slopes; and the department's deviation from that mean, with one slope. The other variants are in
+Table~\ref{tab:si-pred}.
+
+\paragraph{Fig.~3 (the department's pay gradient).} Values and samples in Table~\ref{tab:si-gradient}. (A) US, 4,645
+programmes, 251 universities, 55 fields: the slope with field fixed effects only, i.e., across universities, drawn as
+a point because its source gives only a cluster-robust SE to three decimals, and the slope with university and field
+fixed effects, with its 999-draw university-cluster bootstrap interval. (B) Within universities. US rows: university
+and field fixed effects; the main specification (3,961 programmes, 214 universities, 53 fields), which adds
+field-specific slopes on mean SAT, admission rate, Pell share and $G$; the main specification plus field-specific
+slopes on the production rank; and the main slope divided by the reliability of residual $F$, public-edge (0.654) or
+extrapolated (0.719), drawn as points. UK rows: REF 2021 rank with provider and subject fixed effects; with
+subject-specific slopes on $G$ and selectivity; and REF 2014 rank, whose interval is cluster-robust (CR1, dashed); the
+other UK intervals are provider-cluster bootstrap intervals.
+
+\paragraph{Fig.~4 (the field map).} (A) Spearman correlation across universities of $F$ with Scorecard median pay
+four years after completion, 55 fields with at least 15 universities. Bars are $\pm1.96$ institution-bootstrap SE;
+marker area scales with the number of universities. The top row gives the mean over fields with its 95\% joint
+institution-bootstrap CI. (B) Spearman correlation across universities of the university-wide hiring rank $G$ with
+LEO median pay five years after graduation, all graduates, 33 subjects with at least 15 providers. Per-subject
+intervals are not available in the source table. Filled orange triangles: subjects paid largely on national scales;
+open triangle: allied health, partly paid on national bands. The top rows give the means of the two groups with 95\%
+bootstrap CIs resampling subjects, then providers. The UK has no department-level hiring rank. Further statistics in
+Table~\ref{tab:si-map}.
+
+\paragraph{Fig.~5 (years since graduation).} (A) US mean agreement (the Spearman correlation across universities
+within a field, labelled coupling in the panels) of $F$ and $G$ with PSEO median pay one, five and ten years after
+graduation, for fixed graduation cohorts 2001--2003 to 2010--2012 (40 fields, release V4.14.1). The levels are drawn
+without intervals; the slope's 95\% CI printed in the panel uses the two-way (field, university) cluster variance.
+(B) Standardised rank-regression loadings of pay on $F$ and $G$ within field and cohort, with two-way 95\% CIs.
+(C) UK mean agreement of $G$ with LEO median pay one, three and five years after graduation, fixed cohorts 2013/14 to
+2016/17 (33 subjects); bars are 95\% bootstrap CIs resampling subjects, then providers. Further statistics in
+Section~\ref{sec:si-career}.
+
+% =====================================================================================================================
+\section{Code availability and analysis map}\label{sec:si-code}
+
+The code that produces every number, table and figure of the paper and of this appendix, except the values on the
+earlier export quoted from the earlier version of this analysis (Section~\ref{sec:si-data}), is in the public
+repository \url{https://github.com/soray42/universities-not-departments}. Table~\ref{tab:si-code} names the script
+behind each section, table and figure; the scripts are seeded, and \nolinkurl{reproduce.sh} runs them in dependency
+order from the inputs listed in \nolinkurl{data/sources.csv}.
+
+\begingroup
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{8.8cm}@{}}
+\caption{Analysis map. Paths are relative to the root of the repository.}\label{tab:si-code}\\
+\toprule
+Section or table & Content & Script \\
+\midrule
+\endfirsthead
+\toprule
+Section or table & Content & Script \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\ref{sec:si-data}, Table~\ref{tab:si-data} & sources, releases and licences of every input; download & \nolinkurl{data/sources.csv}; \nolinkurl{scripts/download_data.py} \\
+\ref{sec:si-data}, Table~\ref{tab:si-flow} & sample flow & matched and canonical US rows: \nolinkurl{scripts/paper_checks/sample_flow.py}; other rows: the scripts of the analyses they serve, below \\
+\ref{sec:si-data}, release and name join & the regenerated release in the formats the scripts read; reproduction of the published rank; field crosswalk and institution name join & \nolinkurl{src/wapman_release.py}; \nolinkurl{src/crosswalks/}; \nolinkurl{scripts/24_crosswalk_audit.py} \\
+\ref{sec:si-data}, pooled pay and checks & rebuild of the main-design cells (repaired and earlier name join); sensitivity to pooled pay & \nolinkurl{scripts/paper_checks/c_headline.py}, \nolinkurl{scripts/paper_checks/d_sens.py}, \nolinkurl{scripts/paper_checks/b2_opeid.py} \\
+\ref{sec:si-data}, pay noise and heterogeneity & standard errors of pay medians; heterogeneity across fields under pay noise & \nolinkurl{scripts/73_earnings_reliability.py}; heterogeneity sample: \nolinkurl{scripts/57_icc_threelevel.py} \\
+\ref{sec:si-contrast}, Tables~\ref{tab:si-reliab}--\ref{tab:si-robust} & two-level contrast: statistics, reliabilities, pre-specified rule, calibrated test, model-based estimates, robustness subsets & \nolinkurl{scripts/78_gap_checks.py}; reliability of the hiring rank: \nolinkurl{scripts/56_prestige_reliability.py}; residual reliability, version (a): \nolinkurl{scripts/58_selectivity_deep.py}; US university-mean correlation: \nolinkurl{scripts/paper_checks/us_between.py} \\
+\ref{sec:si-audit}, Tables~\ref{tab:si-size} and~\ref{tab:si-grid} & calibration audit & \nolinkurl{scripts/84_test_calibration.py} \\
+\ref{sec:si-slope}, Tables~\ref{tab:si-gradient} and~\ref{tab:si-slopes} & department gradient and its variants; bound under proportional selection & US: \nolinkurl{scripts/55_selectivity.py}, \nolinkurl{scripts/58_selectivity_deep.py}, \nolinkurl{scripts/78_gap_checks.py}; UK: \nolinkurl{scripts/76_uk_triad.py}; production audit: \nolinkurl{scripts/75_theory_tests.py}; rank places per SD of $F$: \nolinkurl{scripts/paper_checks/us_between.py} \\
+\ref{sec:si-slope}, prior attainment & UK pay and rank coupling under prior-attainment controls & \nolinkurl{scripts/62_uk_leo.py}, \nolinkurl{scripts/72_uk_robustness.py} \\
+\ref{sec:si-pcp}, Tables~\ref{tab:si-pcp} and~\ref{tab:si-pred} & positive control and out-of-sample prediction & \nolinkurl{scripts/85_positive_control_prediction.py} \\
+\ref{sec:si-map}, Table~\ref{tab:si-map} & field map, selectivity, the department's rank against the university's, pay scales & field map, selectivity: \nolinkurl{scripts/55_selectivity.py}; mean agreement: \nolinkurl{scripts/58_selectivity_deep.py}; Scorecard against PSEO (release V4.14.1): \nolinkurl{scripts/59_pseo_refresh.py}; entry-year controls: \nolinkurl{scripts/68_era_selectivity.py}; $F$ against $G$: \nolinkurl{scripts/28_field_vs_generic_prestige.py}, \nolinkurl{scripts/56_prestige_reliability.py}, and in PSEO cells \nolinkurl{scripts/52_career_time_coupling.py}; UK rank $G$, heterogeneity and pay scales: \nolinkurl{scripts/62_uk_leo.py}; $G$ against REF: \nolinkurl{scripts/76_uk_triad.py} \\
+\ref{sec:si-career} & career time & within cohorts: \nolinkurl{scripts/59_pseo_refresh.py}; surface of windows and horizons: \nolinkurl{scripts/65_coupling_dynamics.py}; loadings net of selectivity: \nolinkurl{scripts/66_employer_learning.py}; loadings of $F$ and $G$, graduate study and coverage: \nolinkurl{scripts/67_gradschool_timing.py}; location: \nolinkurl{scripts/75_theory_tests.py}; UK: \nolinkurl{scripts/62_uk_leo.py} \\
+\ref{sec:si-model} & tests of the model; numerical checks of Lemma~\ref{lem:ranks} & \nolinkurl{scripts/75_theory_tests.py}; \nolinkurl{scripts/paper_checks/s3_check.py}, \nolinkurl{scripts/paper_checks/s3_fields.py} (on the field table of \nolinkurl{scripts/28_field_vs_generic_prestige.py}) \\
+\ref{sec:si-events} & event studies & feasibility: \nolinkurl{scripts/80_causal_feasibility.py}; accreditation: \nolinkurl{scripts/81_accreditation_event_study.py}; Nobel prizes: \nolinkurl{scripts/82_nobel_event_study.py} \\
+\ref{sec:si-demand} & occupational demand index; entry conditions & \nolinkurl{scripts/79_field_demand_shocks.py}; \nolinkurl{scripts/65_coupling_dynamics.py} \\
+\ref{sec:si-prereg}, Table~\ref{tab:si-status} & specifications and reading rules & the docstring of each analysis script; UK slope design: \nolinkurl{scripts/prespec/} \\
+\ref{sec:si-figs} & main-text figures & Figs.~1, 4 and 5: \nolinkurl{scripts/83_nexus_figures.py}; Figs.~2 and 3: \nolinkurl{scripts/86_nexus_figures_extra.py}; shared style: \nolinkurl{scripts/figstyle.py} \\
+\end{longtable}
+\endgroup
+
+\bibliographystyle{plainnat}
+\bibliography{refs_merged,refs_short,refs_nhb}
+
+\end{document}
